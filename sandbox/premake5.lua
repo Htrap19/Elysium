@@ -1,6 +1,7 @@
 project "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
+	staticruntime "on"
 	links { "Engine" }
 
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "%{prj.name}")
@@ -15,7 +16,9 @@ project "Sandbox"
 	files { "**.cpp", "**.h" }
 
 	filter "configurations:Debug"
+		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release"
+		runtime "Release"
 		optimize "On"

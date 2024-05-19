@@ -6,7 +6,9 @@ namespace Elysium
 	LayerStack::~LayerStack()
 	{
 		for (auto layer : m_Layers)
+		{
 			delete layer;
+		}
 	}
 
 	void LayerStack::Push(Layer* layer)
