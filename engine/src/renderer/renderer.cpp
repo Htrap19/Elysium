@@ -9,8 +9,8 @@ namespace Elysium
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
-	void Renderer::ClearColor()
+	void Renderer::ClearColor(const glm::vec4& color)
 	{
-		glClearColor(0.5f, 0.2f, 0.3f, 1.0f);
+		glClearColor(color.r, color.g, color.b, color.a);
 	}
 }

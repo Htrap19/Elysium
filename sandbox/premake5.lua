@@ -10,7 +10,9 @@ project "Sandbox"
 	includedirs 
 	{
 		"%{wks.location}/engine/vendor/spdlog/include",
-		"../Engine/src"
+		"../Engine/src",
+		"%{IncludeDir.IMGUI}",
+		"%{IncludeDir.GLM}"
 	}
 
 	files { "**.cpp", "**.h" }

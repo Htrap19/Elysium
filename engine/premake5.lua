@@ -12,6 +12,8 @@ project "Engine"
 		"vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.GLAD}",
+		"%{IncludeDir.GLM}",
+		"%{IncludeDir.IMGUI}",
 	}
 
 	defines
@@ -23,6 +25,7 @@ project "Engine"
 	links
 	{
 		"GLFW",
+		"IMGUI",
 		"opengl32.lib"
 	}
 
