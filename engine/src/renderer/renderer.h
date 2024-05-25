@@ -7,7 +7,6 @@ namespace Elysium
 	class Renderer
 	{
 	public:
-		static void Clear();
-		static void ClearColor(const glm::vec4& color);
+		static void Init();
 	};
 }

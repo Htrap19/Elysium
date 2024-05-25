@@ -24,7 +24,7 @@ public:
 
 	virtual void OnUpdate() override
 	{
-		Elysium::Renderer::ClearColor(m_backgroundColor);
+		Elysium::RenderCommand::SetClearColor(m_backgroundColor);
 	}
 
 	virtual void OnImGuiRender() override

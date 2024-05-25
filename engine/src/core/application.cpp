@@ -1,7 +1,10 @@
 #include "application.h"
+
 #include "log.h"
 
 #include "event/event.h"
+
+#include "renderer/rendercommand.h"
 #include "renderer/renderer.h"
 
 namespace Elysium
@@ -19,6 +22,9 @@ namespace Elysium
 		s_Instance = this;
 		m_Window = Window::Create();
 		m_Window->SetEventCallback(ES_BIND_EVENT_FN(Application::OnEvent));
+
+		RenderCommand::Init();
+		Renderer::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
@@ -54,8 +60,8 @@ namespace Elysium
 	{
 		while (m_Running)
 		{
-			Renderer::Clear();
-			Renderer::ClearColor(glm::vec4{ 0.3f, 0.3f, 0.5f, 1.0f });
+			RenderCommand::Clear();
+			RenderCommand::SetClearColor(glm::vec4{ 0.3f, 0.3f, 0.5f, 1.0f });
 
 			for (auto layer : m_LayerStack)
 				layer->OnUpdate();
