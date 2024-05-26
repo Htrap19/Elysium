@@ -11,6 +11,7 @@ IncludeDir["GLFW"] = "%{wks.location}/engine/vendor/glfw/include"
 IncludeDir["GLAD"] = "%{wks.location}/engine/vendor/glad/include"
 IncludeDir["GLM"] = "%{wks.location}/engine/vendor/glm"
 IncludeDir["IMGUI"] = "%{wks.location}/engine/vendor/imgui"
+IncludeDir["STB"] = "%{wks.location}/engine/vendor/stb"
 
 
 group "Dependencies"

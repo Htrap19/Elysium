@@ -61,7 +61,6 @@ namespace Elysium
 		while (m_Running)
 		{
 			RenderCommand::Clear();
-			RenderCommand::SetClearColor(glm::vec4{ 0.3f, 0.3f, 0.5f, 1.0f });
 
 			for (auto layer : m_LayerStack)
 				layer->OnUpdate();

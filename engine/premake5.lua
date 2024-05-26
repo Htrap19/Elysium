@@ -14,6 +14,7 @@ project "Engine"
 		"%{IncludeDir.GLAD}",
 		"%{IncludeDir.GLM}",
 		"%{IncludeDir.IMGUI}",
+		"%{IncludeDir.STB}",
 	}
 
 	defines
@@ -33,7 +34,8 @@ project "Engine"
 	{ 
 		"src/**.cpp",
 		"src/**.h",
-		"vendor/glad/src/glad.c"
+		"vendor/glad/src/glad.c",
+		"vendor/stb/stb_image.cpp",
 	}
 
 	filter "configurations:Debug"

@@ -1,14 +1,14 @@
-#include "graphicscontext.h"
+#include "shader.h"
 
 #include "core/log.h"
 
-#include "renderer/rendercommand.h"
+#include "renderer/rendererapi.h"
 
-#include "platform/opengl/openglcontext.h"
+#include "platform/opengl/openglshader.h"
 
 namespace Elysium
 {
-	Unique<GraphicsContext> GraphicsContext::Create(GLFWwindow* window)
+	Shared<Shader> Shader::Create(const std::string& shaderFile)
 	{
 		switch (RendererAPI::GetApi())
 		{
@@ -16,12 +16,12 @@ namespace Elysium
 			ES_CORE_CRITICAL("RendererAPI none detected!");
 			break;
 		case RendererAPI::Api::OpenGL:
-			return MakeUnique<OpenGLContext>(window);
+			return MakeShared<OpenGLShader>(shaderFile);
 
 		default:
 			break;
 		}
-		
+
 		return nullptr;
 	}
 }

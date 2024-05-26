@@ -1,14 +1,14 @@
-#include "graphicscontext.h"
+#include "vertexarray.h"
 
 #include "core/log.h"
 
-#include "renderer/rendercommand.h"
+#include "renderer/rendererapi.h"
 
-#include "platform/opengl/openglcontext.h"
+#include "platform/opengl/openglvertexarray.h"
 
 namespace Elysium
 {
-	Unique<GraphicsContext> GraphicsContext::Create(GLFWwindow* window)
+	Shared<VertexArray> VertexArray::Create()
 	{
 		switch (RendererAPI::GetApi())
 		{
@@ -16,12 +16,12 @@ namespace Elysium
 			ES_CORE_CRITICAL("RendererAPI none detected!");
 			break;
 		case RendererAPI::Api::OpenGL:
-			return MakeUnique<OpenGLContext>(window);
+			return MakeShared<OpenGLVertexArray>();
 
 		default:
 			break;
 		}
-		
+
 		return nullptr;
 	}
 }

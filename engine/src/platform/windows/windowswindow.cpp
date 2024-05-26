@@ -32,6 +32,8 @@ namespace Elysium
 			glfwSetErrorCallback(GLFWErrorCallback);
 		}
 
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 		m_Window = glfwCreateWindow((int)m_Data.Width,
 									(int)m_Data.Height,
 									m_Data.Title.c_str(),
