@@ -3,6 +3,7 @@
 #include "core/utility.h"
 #include "core/layer.h"
 #include "core/log.h"
+#include "core/input.h"
 
 #include "event/event.h"
 #include "event/applicationevent.h"
