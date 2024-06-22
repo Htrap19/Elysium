@@ -10,11 +10,17 @@ namespace Elysium
 		OpenGLVertexArray();
 		~OpenGLVertexArray();
 
-		void Bind() const override;
-		void Unbind() const override;
+		virtual void Bind() const override;
+		virtual void Unbind() const override;
 
-		void AddVertexBuffer(const Shared<VertexBuffer>& buffer) override;
-		void SetIndexBuffer(const Shared<IndexBuffer>& buffer) override;
+		virtual void AddVertexBuffer(const Shared<VertexBuffer>& buffer) override;
+		virtual void SetIndexBuffer(const Shared<IndexBuffer>& buffer) override;
+
+		virtual const std::vector<Shared<VertexBuffer>> GetVertexBuffers() const override
+		{ return m_VertexBuffers; }
+
+		virtual Shared<IndexBuffer> GetIndexBuffer() const override
+		{ return m_IndexBuffer; }
 
 	private:
 		uint32_t m_Id;

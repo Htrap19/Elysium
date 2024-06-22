@@ -15,6 +15,9 @@ project "Engine"
 		"%{IncludeDir.GLM}",
 		"%{IncludeDir.IMGUI}",
 		"%{IncludeDir.STB}",
+		"%{IncludeDir.ENTT}",
+		"%{IncludeDir.ASSIMP}",
+		"%{IncludeDir._CONFIG_HEADERS}",
 	}
 
 	defines
@@ -26,7 +29,8 @@ project "Engine"
 	links
 	{
 		"GLFW",
-		"IMGUI",
+		"ImGui",
+		"Assimp",
 		"opengl32.lib"
 	}
 

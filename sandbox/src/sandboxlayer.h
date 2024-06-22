@@ -1,62 +1,67 @@
 #pragma once
 
+#include "scenelayer.h"
+
 #include "engine.h"
 
 #include <imgui.h>
 #include <glm/glm.hpp>
 
-class SandboxLayer : public Elysium::Layer
+class SandboxLayer : public SceneLayer
 {
 public:
 	virtual void OnAttach() override
 	{
 		ES_INFO("Sandbox layer attached!");
-		m_Shader = Elysium::Shader::Create("resources/shaders/renderer.glsl");
-		m_VertexArray = Elysium::VertexArray::Create();
-		m_Texture = Elysium::Texture2D::Create("resources/textures/brick.png");
 
-		float vertices[] =
-		{
-			-0.5f, -0.5f, 0.0f,		0.0f, 0.0f,
-			 0.5f, -0.5f, 0.0f,		1.0f, 0.0f,
-			 0.0f,  0.5f, 0.0f,		0.5f, 1.0f
-		};
+		m_Sun = m_Scene->CreateEntity();
+		m_Sun.AddComponent<Elysium::MeshComponent>("resources/models/sun/scene.gltf");
+		auto& tc = m_Sun.GetComponent<Elysium::TransformComponent>();
+		tc.Scale = glm::vec3(0.1f);
+		tc.Position = glm::vec3(5.0f, 0.0f, -20.0f);
 
-		m_VertexBuffer = Elysium::VertexBuffer::Create(sizeof(vertices), vertices);
-		m_VertexBuffer->SetLayout(Elysium::BufferLayout({
-				Elysium::ShaderDataType::Float3, // layout location (0: a_Pos)
-				Elysium::ShaderDataType::Float2, // layout location (0: a_TexCoord)
-			}));
-
-		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
+		m_Earth = m_Scene->CreateEntity();
+		m_Earth.AddComponent<Elysium::MeshComponent>("resources/models/earth/scene.gltf");
+		auto& tce = m_Earth.GetComponent<Elysium::TransformComponent>();
+		tce.Position = glm::vec3(-10.0f, 0.0f, -10.0f);
 	}
 
 	virtual void OnUpdate() override
 	{
 		Elysium::RenderCommand::SetClearColor(m_BackgroundColor);
-
-		m_Shader->Bind();
-		m_Shader->SetUniformVec4("u_Color", m_TriangleColor);
-		m_Texture->Bind();
-		Elysium::Renderer::Draw(m_VertexArray, m_Shader);
+		SceneLayer::OnUpdate();
 	}
 
 	virtual void OnImGuiRender() override
 	{
 		ImGui::Begin("Window");
 
-		ImGui::Text("Hello world!");
 		ImGui::ColorEdit4("Pick background", &m_BackgroundColor[0]);
-		ImGui::ColorEdit4("Triangle Color", &m_TriangleColor[0]);
+
+		if (ImGui::CollapsingHeader("Sun"))
+		{
+			auto& tc = m_Sun.GetComponent<Elysium::TransformComponent>();
+			ImGui::DragFloat3("Position", &tc.Position[0], .1f);
+			ImGui::DragFloat3("Rotation", &tc.Rotate[0], .1f);
+			ImGui::DragFloat3("Scale", &tc.Scale[0], .1f);
+		}
+
+		if (ImGui::CollapsingHeader("Earth"))
+		{
+			auto& earthTransformComponent = m_Earth.GetComponent<Elysium::TransformComponent>();
+			ImGui::DragFloat3("Position", &earthTransformComponent.Position[0], .1f);
+			ImGui::DragFloat3("Rotation", &earthTransformComponent.Rotate[0], .1f);
+			ImGui::DragFloat3("Scale", &earthTransformComponent.Scale[0], .1f);
+		}
 
 		ImGui::End();
+
+		SceneLayer::OnImGuiRender();
 	}
 
 private:
 	glm::vec4 m_BackgroundColor = { 0.3f, 0.3f, 0.5f, 1.0f };
-	glm::vec4 m_TriangleColor = { 0.3f, 0.2f, 0.5f, 1.0f };
-	Elysium::Shared<Elysium::Shader> m_Shader;
-	Elysium::Shared<Elysium::VertexArray> m_VertexArray;
-	Elysium::Shared<Elysium::VertexBuffer> m_VertexBuffer;
-	Elysium::Shared<Elysium::Texture2D> m_Texture;
+
+	Elysium::Entity m_Sun;
+	Elysium::Entity m_Earth;
 };

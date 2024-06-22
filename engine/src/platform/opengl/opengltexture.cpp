@@ -35,6 +35,7 @@ namespace Elysium
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& imgFile, bool flip)
+		: m_Path(imgFile)
 	{
 		stbi_set_flip_vertically_on_load(flip);
 

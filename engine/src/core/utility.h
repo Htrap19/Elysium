@@ -26,3 +26,5 @@ namespace Elysium
 #define BIT(n) (1 << n)
 
 #define ES_BIND_EVENT_FN(func) std::bind(&func, this, std::placeholders::_1)
+
+#define ES_EXPAND(x) (x)

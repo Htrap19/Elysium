@@ -16,3 +16,7 @@
 #include "renderer/vertexarray.h"
 #include "renderer/buffer.h"
 #include "renderer/texture.h"
+
+#include "scene/scene.h"
+#include "scene/entity.h"
+#include "scene/components.h"

@@ -17,6 +17,10 @@ namespace Elysium
 		static void SetClearColor(const glm::vec4& color)
 		{ s_RendererAPI->SetClearColor(color); }
 
+		static void DrawIndexed(const Shared<VertexArray>& vertexArray,
+								uint32_t indexCount = 0)
+		{ s_RendererAPI->DrawIndexed(vertexArray, indexCount); }
+
 	private:
 		static Unique<RendererAPI> s_RendererAPI;
 	};

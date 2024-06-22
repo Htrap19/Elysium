@@ -8,7 +8,7 @@ namespace Elysium
 	{
 		glGenBuffers(1, &m_Id);
 		Bind();
-		glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, size, data, GL_STREAM_DRAW);
 	}
 
 	OpenGLVertexBuffer::~OpenGLVertexBuffer()
@@ -45,7 +45,7 @@ namespace Elysium
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER,
 					 (count * sizeof(uint32_t)),
 					 data,
-					 GL_STATIC_DRAW);
+					 GL_STREAM_DRAW);
 	}
 
 	OpenGLIndexBuffer::~OpenGLIndexBuffer()
@@ -68,7 +68,7 @@ namespace Elysium
 									uint32_t offset)
 	{
 		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,
-						offset,
+						(offset * sizeof(uint32_t)),
 						(count * sizeof(uint32_t)),
 						data);
 	}

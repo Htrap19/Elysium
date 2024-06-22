@@ -22,4 +22,13 @@ namespace Elysium
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
+
+	void OpenGLRendererAPI::DrawIndexed(const Shared<VertexArray>& vertexArray,
+										uint32_t indexCount)
+	{
+		auto count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+
+		vertexArray->Bind();
+		glDrawElements(GL_TRIANGLES, (GLsizei)count, GL_UNSIGNED_INT, nullptr);
+	}
 }

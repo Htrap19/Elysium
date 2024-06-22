@@ -2,6 +2,8 @@
 
 #include "renderer/buffer.h"
 
+#include <vector>
+
 namespace Elysium
 {
 	class VertexArray
@@ -14,6 +16,9 @@ namespace Elysium
 
 		virtual void AddVertexBuffer(const Shared<VertexBuffer>& buffer) = 0;
 		virtual void SetIndexBuffer(const Shared<IndexBuffer>& buffer) = 0;
+
+		virtual const std::vector<Shared<VertexBuffer>> GetVertexBuffers() const = 0;
+		virtual Shared<IndexBuffer> GetIndexBuffer() const = 0;
 
 		static Shared<VertexArray> Create();
 	};

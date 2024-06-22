@@ -11,3 +11,9 @@
 	path = engine/vendor/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
+[submodule "engine/vendor/entt"]
+	path = engine/vendor/entt
+	url = https://github.com/skypjack/entt.git
+[submodule "engine/vendor/assimp"]
+	path = engine/vendor/assimp
+	url = https://github.com/assimp/assimp.git

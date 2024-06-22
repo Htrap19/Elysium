@@ -18,6 +18,8 @@ namespace Elysium
 		virtual uint32_t GetComponents() const = 0;
 
 		virtual void SetData(const void* data, size_t size) = 0;
+
+		virtual const std::string& GetPath() const = 0;
 	};
 
 	class Texture2D : public Texture

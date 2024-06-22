@@ -12,7 +12,8 @@ project "Sandbox"
 		"%{wks.location}/engine/vendor/spdlog/include",
 		"../Engine/src",
 		"%{IncludeDir.IMGUI}",
-		"%{IncludeDir.GLM}"
+		"%{IncludeDir.GLM}",
+		"%{IncludeDir.ENTT}"
 	}
 
 	files { "**.cpp", "**.h" }

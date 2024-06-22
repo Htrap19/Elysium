@@ -1,0 +1,11 @@
+Model Information:
+* title:	CASUAL MALE CHAR ( RIGGED )
+* source:	https://sketchfab.com/3d-models/casual-male-char-rigged-9034a1acc95e494592441a057d319953
+* author:	ijiklvn (https://sketchfab.com/kelvin-carvalho)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "CASUAL MALE CHAR ( RIGGED )" (https://sketchfab.com/3d-models/casual-male-char-rigged-9034a1acc95e494592441a057d319953) by ijiklvn (https://sketchfab.com/kelvin-carvalho) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
