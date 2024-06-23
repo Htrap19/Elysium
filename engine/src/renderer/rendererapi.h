@@ -29,6 +29,8 @@ namespace Elysium
 		virtual void DrawIndexed(const Shared<VertexArray>& vertexArray,
 								 uint32_t indexCount = 0) = 0;
 
+		virtual void SetDepthMask(bool enable) = 0;
+
 		static Api GetApi() { return s_Api; };
 		static Unique<RendererAPI> Create();
 

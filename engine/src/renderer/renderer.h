@@ -2,6 +2,7 @@
 
 #include "renderer/vertexarray.h"
 #include "renderer/shader.h"
+#include "renderer/texture.h"
 
 #include <glm/glm.hpp>
 
@@ -43,8 +44,19 @@ namespace Elysium
 		static void DrawTriangle(const glm::vec4& color,
 								 const glm::mat4& model = glm::mat4(1.0f));
 
+		static void DrawCube(const glm::vec4& color,
+							 const glm::mat4& model = glm::mat4(1.0f));
+
 		static void DrawMesh(const MeshComponent& mesh,
 							 const glm::mat4& model = glm::mat4(1.0f));
+		
+		static void DrawSkyBox(const glm::mat4& projection,
+							   const glm::mat4& view,
+							   const Shared<CubeMap>& skybox);
+
+	private:
+		static void PushData(const std::vector<Renderer::Vertex>& vertices,
+							 const std::vector<uint32_t>& indices);
 
 	private:
 		inline static Statistics s_Stats;

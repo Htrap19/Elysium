@@ -31,4 +31,9 @@ namespace Elysium
 		vertexArray->Bind();
 		glDrawElements(GL_TRIANGLES, (GLsizei)count, GL_UNSIGNED_INT, nullptr);
 	}
+
+	void OpenGLRendererAPI::SetDepthMask(bool enable)
+	{
+		glDepthMask(enable ? GL_TRUE : GL_FALSE);
+	}
 }

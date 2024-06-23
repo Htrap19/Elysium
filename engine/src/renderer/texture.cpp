@@ -41,4 +41,21 @@ namespace Elysium
 
 		return nullptr;
 	}
+
+	Shared<CubeMap> CubeMap::Create(const std::array<std::string, 6> faces)
+	{
+		switch (RendererAPI::GetApi())
+		{
+		case RendererAPI::Api::None:
+			ES_CORE_CRITICAL("RendererAPI none detected!");
+			break;
+		case RendererAPI::Api::OpenGL:
+			return MakeShared<OpenGLCubeMap>(faces);
+
+		default:
+			break;
+		}
+
+		return nullptr;
+	}
 }

@@ -1,7 +1,6 @@
 #include "renderer.h"
 
 #include "renderer/buffer.h"
-#include "renderer/texture.h"
 #include "renderer/rendercommand.h"
 
 #include "core/log.h"
@@ -14,6 +13,7 @@
 #include <unordered_map>
 
 #define SHADER_FILE					"resources/shaders/renderer.glsl"
+#define SKYBOX_SHADER_FILE			"resources/shaders/skybox.glsl"
 
 #define PROJECTION_UNIFORM_NAME		"u_Projection"
 #define VIEW_UNIFORM_NAME			"u_View"
@@ -36,7 +36,8 @@ namespace Elysium
 			Shared<VertexBuffer> VertexBuffer;
 			Shared<IndexBuffer> IndexBuffer;
 
-			Shared<Shader> Shader;
+			Shared<Shader> RendererShader;
+			Shared<Shader> SkyBoxShader;
 
 			std::array<Shared<Texture2D>, MaxTexturesCount> Textures;
 			std::unordered_map<uint32_t, glm::mat4> ModelMatrices;
@@ -45,6 +46,41 @@ namespace Elysium
 			size_t IndexOffset		= 0;
 			size_t IndexCount		= 0;
 			size_t ModelsCount		= 0;
+
+			inline static std::vector<Renderer::Vertex> CubeVertices =
+			{
+				{ {-1.0f,  1.0f, -1.0f}, {0.0f, 0.0f}, 0, 0, glm::vec4(1.0f) },
+				{ {-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f}, 0, 0, glm::vec4(1.0f) },
+				{ { 1.0f,  1.0f, -1.0f}, {0.0f, 0.0f}, 0, 0, glm::vec4(1.0f) },
+				{ { 1.0f, -1.0f, -1.0f}, {0.0f, 0.0f}, 0, 0, glm::vec4(1.0f) },
+
+				{ {-1.0f,  1.0f,  1.0f}, {0.0f, 0.0f}, 0, 0, glm::vec4(1.0f) },
+				{ { 1.0f,  1.0f,  1.0f}, {0.0f, 0.0f}, 0, 0, glm::vec4(1.0f) },
+				{ {-1.0f, -1.0f,  1.0f}, {0.0f, 0.0f}, 0, 0, glm::vec4(1.0f) },
+				{ { 1.0f, -1.0f,  1.0f}, {0.0f, 0.0f}, 0, 0, glm::vec4(1.0f) },
+			};
+
+			inline static std::vector<uint32_t> CubeIndices =
+			{
+				// front
+				0, 1, 2,
+				2, 1, 3,
+				// right
+				2, 3, 5,
+				5, 3, 7,
+				// back
+				5, 7, 4,
+				4, 7, 6,
+				// left
+				4, 6, 0,
+				0, 6, 1,
+				// top
+				4, 0, 5,
+				5, 0, 2,
+				// bottom
+				1, 6, 3,
+				3, 6, 7
+			};
 		};
 	}
 
@@ -81,7 +117,8 @@ namespace Elysium
 		s_Data.VertexArray->AddVertexBuffer(s_Data.VertexBuffer);
 		s_Data.VertexArray->SetIndexBuffer(s_Data.IndexBuffer);
 
-		s_Data.Shader = Shader::Create(SHADER_FILE);
+		s_Data.RendererShader = Shader::Create(SHADER_FILE);
+		s_Data.SkyBoxShader = Shader::Create(SKYBOX_SHADER_FILE);
 
 		auto plainTexture = Texture2D::Create(1, 1);
 		uint32_t white = 0xffffffff;
@@ -95,9 +132,9 @@ namespace Elysium
 	{
 		ResetStats();
 
-		s_Data.Shader->Bind();
-		s_Data.Shader->SetUniformMat4(PROJECTION_UNIFORM_NAME, projection);
-		s_Data.Shader->SetUniformMat4(VIEW_UNIFORM_NAME, view);
+		s_Data.RendererShader->Bind();
+		s_Data.RendererShader->SetUniformMat4(PROJECTION_UNIFORM_NAME, projection);
+		s_Data.RendererShader->SetUniformMat4(VIEW_UNIFORM_NAME, view);
 
 		StartBatch();
 	}
@@ -112,18 +149,18 @@ namespace Elysium
 		if (s_Data.IndexCount == 0)
 			return; // Nothing to draw
 
-		s_Data.Shader->Bind();
+		s_Data.RendererShader->Bind();
 
 		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 		{
 			s_Data.Textures[i]->Bind(i);
-			s_Data.Shader->SetUniformi(TEXTURE_UNIFORM_NAME + ("[" + std::to_string(i) + "]"), i);
+			s_Data.RendererShader->SetUniformi(TEXTURE_UNIFORM_NAME + ("[" + std::to_string(i) + "]"), i);
 		}
 
 		for (uint32_t i = 0; i < s_Data.ModelsCount; i++)
 		{
-			s_Data.Shader->SetUniformMat4(MODEL_UNIFORM_NAME + ("[" + std::to_string(i) + "]"),
-										  s_Data.ModelMatrices[i]);
+			s_Data.RendererShader->SetUniformMat4(MODEL_UNIFORM_NAME + ("[" + std::to_string(i) + "]"),
+												  s_Data.ModelMatrices[i]);
 		}
 		RenderCommand::DrawIndexed(s_Data.VertexArray,
 								   (uint32_t)s_Data.IndexCount);
@@ -146,9 +183,9 @@ namespace Elysium
 	{
 		static std::vector<Renderer::Vertex> vertices =
 		{
-			{{-0.5f, -0.5f, 0.0f},	{0.0f, 0.0f}, 0, 0, color},
-			{{ 0.5f, -0.5f, 0.0f},	{1.0f, 0.0f}, 0, 0, color},
-			{{ 0.0f,  0.5f, 0.0f},	{0.5f, 1.0f}, 0, 0, color}
+			{{-0.5f, -0.5f, 0.0f},	{0.0f, 0.0f}, 0, 0, glm::vec4(1.0f)},
+			{{ 0.5f, -0.5f, 0.0f},	{1.0f, 0.0f}, 0, 0, glm::vec4(1.0f)},
+			{{ 0.0f,  0.5f, 0.0f},	{0.5f, 1.0f}, 0, 0, glm::vec4(1.0f)}
 		};
 
 		static std::vector<uint32_t> indices =
@@ -198,6 +235,36 @@ namespace Elysium
 		s_Stats.ModelCount++;
 	}
 
+	void Renderer::DrawCube(const glm::vec4& color, const glm::mat4& model)
+	{
+		size_t numOfVertices = Util::RendererData::CubeVertices.size();
+		size_t numOfIndices = Util::RendererData::CubeIndices.size();
+
+		if (s_Data.IndexCount >= Util::MaxIndicesCount ||
+			(s_Data.IndexCount + numOfIndices) >= Util::MaxIndicesCount ||
+			s_Data.TextureSlotIndex >= Util::MaxTexturesCount ||
+			s_Data.ModelsCount >= Util::MaxModelMatricesCount ||
+			s_Data.IndexOffset >= Util::MaxVerticesCount ||
+			(s_Data.IndexOffset + numOfVertices) >= Util::MaxVerticesCount)
+			NextBatch();
+
+		for (auto& vertex : Util::RendererData::CubeVertices)
+			vertex.ModelIndex = s_Data.ModelsCount,
+			vertex.Color = color;
+
+		auto tempIndices = Util::RendererData::CubeIndices;
+		for (auto& idx : tempIndices)
+			idx = s_Data.IndexOffset + idx;
+
+		PushData(Util::RendererData::CubeVertices,
+				 tempIndices);
+
+		s_Data.ModelMatrices[(uint32_t)s_Data.ModelsCount] = model;
+		s_Data.ModelsCount++;
+
+		s_Stats.ModelCount++;
+	}
+
 	void Renderer::DrawMesh(const MeshComponent& mesh,
 							const glm::mat4& model)
 	{
@@ -243,24 +310,61 @@ namespace Elysium
 		for (auto& idx : tempMesh.Indices)
 			idx = s_Data.IndexOffset + idx;
 
+		PushData(tempMesh.Vertices, tempMesh.Indices);
+
+		s_Data.ModelMatrices[(uint32_t)s_Data.ModelsCount] = model;
+		s_Data.ModelsCount++;
+
+		s_Stats.ModelCount++;
+	}
+
+	void Renderer::DrawSkyBox(const glm::mat4& projection,
+							  const glm::mat4& view,
+							  const Shared<CubeMap>& skybox)
+	{
+		auto& vertices = Util::RendererData::CubeVertices;
+		auto& indices = Util::RendererData::CubeIndices;
+
+		RenderCommand::SetDepthMask(false);
+		
 		s_Data.VertexBuffer->Bind();
-		s_Data.VertexBuffer->SetData(tempMesh.Vertices.data(),
+		s_Data.VertexBuffer->SetData(vertices.data(),
+									 (vertices.size() * sizeof(Renderer::Vertex)));
+
+		s_Data.IndexBuffer->Bind();
+		s_Data.IndexBuffer->SetData(indices.data(),
+									indices.size());
+
+		s_Data.SkyBoxShader->Bind();
+		s_Data.SkyBoxShader->SetUniformMat4(PROJECTION_UNIFORM_NAME, projection);
+		s_Data.SkyBoxShader->SetUniformMat4(VIEW_UNIFORM_NAME, view);
+		skybox->Bind();
+		RenderCommand::DrawIndexed(s_Data.VertexArray,
+								   indices.size());
+
+		RenderCommand::SetDepthMask(true);
+	}
+
+	void Renderer::PushData(const std::vector<Renderer::Vertex>& vertices,
+							const std::vector<uint32_t>& indices)
+	{
+		size_t numOfVertices = vertices.size();
+		size_t numOfIndices = indices.size();
+
+		s_Data.VertexBuffer->Bind();
+		s_Data.VertexBuffer->SetData(vertices.data(),
 									 (numOfVertices * sizeof(Renderer::Vertex)),
 									 (s_Data.IndexOffset * sizeof(Renderer::Vertex)));
 
 		s_Data.IndexBuffer->Bind();
-		s_Data.IndexBuffer->SetData(tempMesh.Indices.data(),
+		s_Data.IndexBuffer->SetData(indices.data(),
 									(uint32_t)numOfIndices,
 									(uint32_t)s_Data.IndexCount);
 
 		s_Data.IndexOffset += numOfVertices;
 		s_Data.IndexCount += numOfIndices;
 
-		s_Data.ModelMatrices[(uint32_t)s_Data.ModelsCount] = model;
-		s_Data.ModelsCount++;
-
 		s_Stats.TotalVertices += (uint32_t)s_Data.IndexOffset;
 		s_Stats.TotalIndices += (uint32_t)s_Data.IndexCount;
-		s_Stats.ModelCount++;
 	}
 }

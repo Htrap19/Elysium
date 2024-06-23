@@ -25,8 +25,6 @@ namespace Elysium
 
 	void Scene::OnUpdate()
 	{
-		auto view = m_Registry.view<TransformComponent, MeshComponent>();
-
 		auto projMat = glm::perspective(glm::radians(60.0f),
 										m_AspectRatio,
 										0.1f,
@@ -35,6 +33,16 @@ namespace Elysium
 		auto viewMat = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
 								   glm::vec3(0.0f),
 								   glm::vec3(0.0f, 1.0f, 0.0f));
+
+		if (m_SkyBox)
+		{
+			Renderer::DrawSkyBox(projMat,
+								 glm::mat4(glm::mat3(viewMat)),
+								 m_SkyBox);
+		}
+
+		auto view = m_Registry.view<TransformComponent, MeshComponent>();
+
 		Renderer::Begin(projMat, viewMat);
 		for (auto& entity : view)
 		{

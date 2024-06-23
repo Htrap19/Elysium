@@ -24,6 +24,17 @@ public:
 		m_Earth.AddComponent<Elysium::MeshComponent>("resources/models/earth/scene.gltf");
 		auto& tce = m_Earth.GetComponent<Elysium::TransformComponent>();
 		tce.Position = glm::vec3(-10.0f, 0.0f, -10.0f);
+
+		auto spaceSkyBox = Elysium::CubeMap::Create(
+		{
+			"resources/textures/skybox/right.png",
+			"resources/textures/skybox/left.png",
+			"resources/textures/skybox/top.png",
+			"resources/textures/skybox/bottom.png",
+			"resources/textures/skybox/front.png",
+			"resources/textures/skybox/back.png",
+		});
+		m_Scene->SetSkyBox(spaceSkyBox);
 	}
 
 	virtual void OnUpdate() override
