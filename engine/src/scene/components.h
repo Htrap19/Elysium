@@ -3,6 +3,8 @@
 #include "renderer/renderer.h"
 
 #include "scene/assimploader.h"
+#include "scene/camera.h"
+#include "scene/scriptableentity.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -56,6 +58,33 @@ namespace Elysium
 								mesh.Textures.begin(),
 								mesh.Textures.end());
 			}
+		}
+	};
+
+	struct CameraComponent
+	{
+		Camera Camera;
+		bool IsPrimary;
+
+		CameraComponent(const glm::vec3& position,
+						bool isPrimary = true)
+			: Camera(position, 0.0f, 0.0f, 25.0f, 0.5f),
+			IsPrimary(isPrimary)
+		{}
+	};
+
+	struct NativeScriptComponent
+	{
+		ScriptableEntity* Instance = nullptr;
+
+		ScriptableEntity* (*InstantiateScript)() = nullptr;
+		void (*DestroyScript)(NativeScriptComponent*) = nullptr;
+
+		template <typename T>
+		void Bind()
+		{
+			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
+			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
 	};
 }

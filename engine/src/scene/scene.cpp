@@ -15,6 +15,15 @@ namespace Elysium
 		m_AspectRatio = ((float)1280 / (float)720);
 	}
 
+	Scene::~Scene()
+	{
+		m_Registry.view<NativeScriptComponent>().each([](auto entity, NativeScriptComponent& nsc)
+			{
+				nsc.Instance->OnDestroy();
+				nsc.DestroyScript(&nsc);
+			});
+	}
+
 	Entity Scene::CreateEntity()
 	{
 		auto entity = Entity(m_Registry.create(), this);
@@ -23,16 +32,40 @@ namespace Elysium
 		return entity;
 	}
 
-	void Scene::OnUpdate()
+	void Scene::OnUpdate(Timestep ts)
 	{
+		m_Registry.view<NativeScriptComponent>().each([&](auto entity, NativeScriptComponent& nsc)
+			{
+				if (!nsc.Instance)
+				{
+					nsc.Instance = nsc.InstantiateScript();
+					nsc.Instance->OnCreate();
+				}
+
+				nsc.Instance->OnUpdate(ts);
+			});
+
 		auto projMat = glm::perspective(glm::radians(60.0f),
 										m_AspectRatio,
 										0.1f,
-										100.0f);
+										10000.0f);
 
-		auto viewMat = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
-								   glm::vec3(0.0f),
-								   glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::mat4 viewMat = glm::mat4(1.0f);
+
+		auto cameraRegistryView = m_Registry.view<CameraComponent>();
+
+		Camera primaryCamera;
+		for (auto& entity : cameraRegistryView)
+		{
+			auto& cameraComponent = cameraRegistryView.get<CameraComponent>(entity);
+			if (cameraComponent.IsPrimary)
+			{
+				primaryCamera = cameraComponent.Camera;
+				break;
+			}
+		}
+
+		viewMat = primaryCamera.CalculateView();
 
 		if (m_SkyBox)
 		{

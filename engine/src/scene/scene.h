@@ -2,6 +2,8 @@
 
 #include <entt/entt.hpp>
 
+#include "core/timestep.h"
+
 #include "renderer/shader.h"
 #include "renderer/vertexarray.h"
 #include "renderer/texture.h"
@@ -13,13 +15,14 @@ namespace Elysium
 	{
 	public:
 		Scene();
+		virtual ~Scene();
 
 		Entity CreateEntity();
 
 		inline void SetSkyBox(const Shared<CubeMap>& skybox)
 		{ m_SkyBox = skybox; }
 
-		void OnUpdate();
+		void OnUpdate(Timestep ts);
 
 		void Resize(uint32_t width, uint32_t height);
 

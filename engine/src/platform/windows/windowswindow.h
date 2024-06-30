@@ -27,8 +27,7 @@ namespace Elysium
 		virtual void SetVSync(bool enabled) override;
 		virtual bool IsVSync() const override;
 
-	private:
-
+		virtual void SetCursorMode(bool enable) override;
 
 	private:
 		GLFWwindow* m_Window = nullptr;

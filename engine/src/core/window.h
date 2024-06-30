@@ -38,6 +38,8 @@ namespace Elysium
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
 
+		virtual void SetCursorMode(bool enable) = 0;
+
 		static Unique<Window> Create(const WindowProps& props = WindowProps());
 	};
 }

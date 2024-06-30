@@ -18,9 +18,9 @@ public:
 		dispatcher.Dispatch<Elysium::WindowResizeEvent>(ES_BIND_EVENT_FN(SceneLayer::OnResize));
 	}
 
-	virtual void OnUpdate() override
+	virtual void OnUpdate(Elysium::Timestep ts) override
 	{
-		m_Scene->OnUpdate();
+		m_Scene->OnUpdate(ts);
 	}
 
 	virtual void OnImGuiRender() override

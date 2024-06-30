@@ -38,6 +38,8 @@ namespace Elysium
 
 		ImGuiLayer* m_ImGuiLayer = nullptr;
 
+		float m_LastFrameTime = 0.0f;
+
 		static Application* s_Instance;
 	};
 

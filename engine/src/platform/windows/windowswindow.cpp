@@ -39,6 +39,7 @@ namespace Elysium
 									m_Data.Title.c_str(),
 									nullptr,
 									nullptr);
+
 		if (!m_Window)
 		{
 			ES_CORE_ERROR("Failed to create window!");
@@ -188,6 +189,13 @@ namespace Elysium
 	bool WindowsWindow::IsVSync() const
 	{
 		return m_Data.VSync;
+	}
+
+	void WindowsWindow::SetCursorMode(bool enable)
+	{
+		glfwSetInputMode(m_Window,
+						 GLFW_CURSOR,
+						 (enable ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED));
 	}
 }
 

@@ -1,11 +1,14 @@
 #include "application.h"
 
-#include "log.h"
+#include "core/log.h"
+#include "core/timestep.h"
 
 #include "event/event.h"
 
 #include "renderer/rendercommand.h"
 #include "renderer/renderer.h"
+
+#include <GLFW/glfw3.h>
 
 namespace Elysium
 {
@@ -58,12 +61,17 @@ namespace Elysium
 
 	void Application::Run()
 	{
+		double time = 0.0f;
 		while (m_Running)
 		{
+			time = glfwGetTime();
+			Timestep timeStep = time - m_LastFrameTime;
+			m_LastFrameTime = time;
+			
 			RenderCommand::Clear();
 
 			for (auto layer : m_LayerStack)
-				layer->OnUpdate();
+				layer->OnUpdate(timeStep);
 
 			m_ImGuiLayer->Begin();
 			for (auto layer : m_LayerStack)
