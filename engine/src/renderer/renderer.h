@@ -54,6 +54,9 @@ namespace Elysium
 							   const glm::mat4& view,
 							   const Shared<CubeMap>& skybox);
 
+		static void DrawAxis(float axisLength,
+							 const glm::mat4& model = glm::mat4(1.0f));
+
 	private:
 		static void PushData(const std::vector<Renderer::Vertex>& vertices,
 							 const std::vector<uint32_t>& indices);

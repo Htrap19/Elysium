@@ -345,6 +345,46 @@ namespace Elysium
 		RenderCommand::SetDepthMask(true);
 	}
 
+	void Renderer::DrawAxis(float axisLength,
+							const glm::mat4& model)
+	{
+		static std::vector<Renderer::Vertex> axisVertices =
+		{
+			{ { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f }, 0, 0, { 0.8f, 0.2f, 0.3f, 1.0f } },
+			{ { 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f }, 0, 0, { 0.8f, 0.2f, 0.3f, 1.0f } },
+			
+			{ { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f }, 0, 0, { 0.3f, 0.8f, 0.2f, 1.0f } },
+			{ { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f }, 0, 0, { 0.3f, 0.8f, 0.2f, 1.0f } },
+
+			{ { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f }, 0, 0, { 0.3f, 0.3f, 0.8f, 1.0f } },
+			{ { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f }, 0, 0, { 0.3f, 0.3f, 0.8f, 1.0f } },
+		};
+
+		static std::vector<uint32_t> indices =
+		{
+			0, 1, 2, 3, 4, 5
+		};
+
+		axisVertices[1].Position.x = axisLength;
+		axisVertices[3].Position.y = axisLength;
+		axisVertices[5].Position.z = axisLength;
+
+		s_Data.VertexBuffer->Bind();
+		s_Data.VertexBuffer->SetData(axisVertices.data(),
+									 (axisVertices.size() * sizeof(Renderer::Vertex)));
+
+		s_Data.IndexBuffer->Bind();
+		s_Data.IndexBuffer->SetData(indices.data(),
+									indices.size());
+
+		s_Data.RendererShader->Bind();
+
+		s_Data.RendererShader->SetUniformMat4(MODEL_UNIFORM_NAME + ("[" + std::to_string(0) + "]"),
+											  model);
+
+		RenderCommand::DrawLinesIndexed(s_Data.VertexArray, 6);
+	}
+
 	void Renderer::PushData(const std::vector<Renderer::Vertex>& vertices,
 							const std::vector<uint32_t>& indices)
 	{

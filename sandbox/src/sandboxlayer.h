@@ -4,6 +4,7 @@
 #include "wasdcontroller.h"
 
 #include "ellipticalmotion.h"
+#include "cameraellipticalmotion.h"
 
 #include "engine.h"
 
@@ -51,19 +52,25 @@ public:
 		auto& cc = m_Camera.AddComponent<Elysium::CameraComponent>(glm::vec3(0.0f, 0.0f, 3.0f));
 		cc.Camera.SetAspectRatio(m_Scene->GetAspectRatio());
 		m_Camera.AddComponent<Elysium::NativeScriptComponent>()
-			.Bind<WASDController>();
+			.Bind<CameraEllipticalMotion>();
 	}
 
 	virtual void OnUpdate(Elysium::Timestep ts) override
 	{
 		Elysium::RenderCommand::SetClearColor(m_BackgroundColor);
+
 		SceneLayer::OnUpdate(ts);
+
+		auto& cc = m_Camera.GetComponent<Elysium::CameraComponent>();
+		if (m_ShowAxis)
+			Elysium::Renderer::DrawAxis(cc.Camera.GetFarPlane());
 
 		if (Elysium::Input::IsKeyPressed(Elysium::Key::Escape))
 			m_Running = false;
 
-		auto nsc = m_Camera.GetComponent<Elysium::NativeScriptComponent>().Instance;
-		auto wasdnsc = static_cast<WASDController*>(nsc);
+		auto wasdnsc = m_Camera
+			.GetComponent<Elysium::NativeScriptComponent>()
+			.As<WASDController>();
 
 		wasdnsc->SetEnabled(m_Running);
 	}
@@ -78,6 +85,7 @@ public:
 		ImGui::Begin("Scene Components");
 
 		ImGui::ColorEdit4("Pick background", &m_BackgroundColor[0]);
+		ImGui::Checkbox("Show Axis", &m_ShowAxis);
 
 		if (ImGui::CollapsingHeader("Sun"))
 		{
@@ -106,7 +114,7 @@ public:
 			if (ImGui::Button("View"))
 			{
 				auto& cc = m_Camera.GetComponent<Elysium::CameraComponent>();
-				cc.Camera.SetFront(earthTransformComponent.Position);
+				cc.Camera.SetPosition(earthTransformComponent.Position);
 			}
 		}
 
@@ -159,4 +167,5 @@ private:
 	Elysium::Entity m_Camera;
 
 	bool m_Running = false;
+	bool m_ShowAxis = false;
 };
