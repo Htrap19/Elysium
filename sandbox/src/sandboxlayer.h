@@ -3,6 +3,8 @@
 #include "scenelayer.h"
 #include "wasdcontroller.h"
 
+#include "ellipticalmotion.h"
+
 #include "engine.h"
 
 #include <imgui.h>
@@ -25,6 +27,14 @@ public:
 		m_Earth.AddComponent<Elysium::MeshComponent>("resources/models/earth/scene.gltf");
 		auto& tce = m_Earth.GetComponent<Elysium::TransformComponent>();
 		tce.Position = glm::vec3(-10.0f, 0.0f, -10.0f);
+
+		m_Mercury = m_Scene->CreateEntity();
+		m_Mercury.AddComponent<Elysium::MeshComponent>("resources/models/mercury_sharp/scene.gltf");
+		auto& tcm = m_Mercury.GetComponent<Elysium::TransformComponent>();
+		tcm.Position = glm::vec3(-20.0f, 0.0f, -20.0f);
+
+		m_Mercury.AddComponent<Elysium::NativeScriptComponent>()
+			.Bind<EllipticalMotion>();
 
 		auto spaceSkyBox = Elysium::CubeMap::Create(
 		{
@@ -65,7 +75,7 @@ public:
 
 		SceneLayer::OnImGuiRender();
 
-		ImGui::Begin("Window");
+		ImGui::Begin("Scene Components");
 
 		ImGui::ColorEdit4("Pick background", &m_BackgroundColor[0]);
 
@@ -100,6 +110,20 @@ public:
 			}
 		}
 
+		if (ImGui::CollapsingHeader("Mercury"))
+		{
+			auto& tc = m_Mercury.GetComponent<Elysium::TransformComponent>();
+			ImGui::DragFloat3("Position", &tc.Position[0], .1f);
+			ImGui::DragFloat3("Rotation", &tc.Rotate[0], .1f);
+			ImGui::DragFloat3("Scale", &tc.Scale[0], .1f);
+
+			if (ImGui::Button("View"))
+			{
+				auto& cc = m_Camera.GetComponent<Elysium::CameraComponent>();
+				cc.Camera.SetFront(tc.Position);
+			}
+		}
+
 		if (ImGui::CollapsingHeader("Camera"))
 		{
 			auto& cc = m_Camera.GetComponent<Elysium::CameraComponent>();
@@ -128,11 +152,11 @@ private:
 	glm::vec4 m_BackgroundColor = { 0.3f, 0.3f, 0.5f, 1.0f };
 
 	Elysium::Entity m_Sun;
+
 	Elysium::Entity m_Earth;
+	Elysium::Entity m_Mercury;
 
 	Elysium::Entity m_Camera;
 
 	bool m_Running = false;
-	float m_LastX = 0.0f, m_LastY = 0.0f;
-	float m_DeltaX = 0.0f, m_DeltaY = 0.0f;
 };
