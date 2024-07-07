@@ -51,6 +51,9 @@ namespace Elysium
 			return m_Scene->m_Registry.get<T>(m_EnttHandle);
 		}
 
+		inline Scene* GetScene() const
+		{ return m_Scene; }
+
 	private:
 		entt::entity m_EnttHandle = entt::null;
 		Scene* m_Scene = nullptr;

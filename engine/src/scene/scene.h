@@ -26,6 +26,9 @@ namespace Elysium
 
 		void Resize(uint32_t width, uint32_t height);
 
+		inline float GetAspectRatio() const
+		{ return m_AspectRatio; }
+
 	private:
 		entt::registry m_Registry;
 		Shared<CubeMap> m_SkyBox;

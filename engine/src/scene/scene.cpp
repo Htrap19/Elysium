@@ -34,22 +34,19 @@ namespace Elysium
 
 	void Scene::OnUpdate(Timestep ts)
 	{
-		m_Registry.view<NativeScriptComponent>().each([&](auto entity, NativeScriptComponent& nsc)
+		m_Registry.view<NativeScriptComponent>().each([&](auto entity, auto& nsc)
 			{
 				if (!nsc.Instance)
 				{
 					nsc.Instance = nsc.InstantiateScript();
 					nsc.Instance->OnCreate();
+					nsc.Instance->m_Self = Entity(entity, this);
 				}
 
 				nsc.Instance->OnUpdate(ts);
 			});
 
-		auto projMat = glm::perspective(glm::radians(60.0f),
-										m_AspectRatio,
-										0.1f,
-										10000.0f);
-
+		glm::mat4 projMat = glm::mat4(1.0f);
 		glm::mat4 viewMat = glm::mat4(1.0f);
 
 		auto cameraRegistryView = m_Registry.view<CameraComponent>();
@@ -66,6 +63,7 @@ namespace Elysium
 		}
 
 		viewMat = primaryCamera.CalculateView();
+		projMat = primaryCamera.CalculateProjection();
 
 		if (m_SkyBox)
 		{

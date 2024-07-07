@@ -80,6 +80,11 @@ namespace Elysium
 		return glm::lookAt(m_Position, m_Position + m_Front, m_Up);
 	}
 
+	glm::mat4 Camera::CalculateProjection() const
+	{
+		return glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearPlane, m_FarPlane);
+	}
+
 	void Camera::Update()
 	{
 		m_Front.x = cos(glm::radians(m_Pitch)) * cos(glm::radians(m_Yaw));

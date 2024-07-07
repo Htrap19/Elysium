@@ -27,6 +27,7 @@ namespace Elysium
 						float deltaY);
 
 		glm::mat4 CalculateView() const;
+		glm::mat4 CalculateProjection() const;
 
 		inline void SetPosition(const glm::vec3& position)
 		{ m_Position = position; }
@@ -64,6 +65,30 @@ namespace Elysium
 		inline float GetMovementSpeed() const
 		{ return m_MovementSpeed; }
 
+		inline void SetNearPlane(float nearPlane)
+		{ m_NearPlane = nearPlane; }
+
+		inline float GetNearPlane() const
+		{ return m_NearPlane; }
+
+		inline void SetFarPlane(float farPlane)
+		{ m_FarPlane = farPlane; }
+
+		inline float GetFarPlane() const
+		{ return m_FarPlane; }
+
+		inline void SetFOV(float fov)
+		{ m_FOV = fov; }
+
+		inline float GetFOV() const
+		{ return m_FOV; }
+
+		inline void SetAspectRatio(float aspectRatio)
+		{ m_AspectRatio = aspectRatio; }
+
+		inline float GetAspectRatio() const
+		{ return m_AspectRatio; }
+
 	private:
 		void Update();
 
@@ -75,5 +100,10 @@ namespace Elysium
 		float m_Yaw = -90.0f, m_Pitch = 0.0f;
 		float m_TurningSpeed = 5.0f;
 		float m_MovementSpeed = 0.0f;
+
+		float m_NearPlane = 0.1f;
+		float m_FarPlane = 10000.0f;
+		float m_FOV = 60.0f;
+		float m_AspectRatio = 0.0f;
 	};
 }

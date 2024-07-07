@@ -2,6 +2,8 @@
 
 #include "core/timestep.h"
 
+#include "scene/entity.h"
+
 namespace Elysium
 {
 	class Scene;
@@ -15,7 +17,9 @@ namespace Elysium
 		virtual void OnUpdate(Timestep ts) {}
 		virtual void OnDestroy() {}
 
-	private:
+	protected:
+		Entity m_Self;
+
 		friend class Scene;
 	};
 }

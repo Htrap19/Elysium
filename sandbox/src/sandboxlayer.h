@@ -1,6 +1,7 @@
 #pragma once
 
 #include "scenelayer.h"
+#include "wasdcontroller.h"
 
 #include "engine.h"
 
@@ -38,6 +39,9 @@ public:
 
 		m_Camera = m_Scene->CreateEntity();
 		auto& cc = m_Camera.AddComponent<Elysium::CameraComponent>(glm::vec3(0.0f, 0.0f, 3.0f));
+		cc.Camera.SetAspectRatio(m_Scene->GetAspectRatio());
+		m_Camera.AddComponent<Elysium::NativeScriptComponent>()
+			.Bind<WASDController>();
 	}
 
 	virtual void OnUpdate(Elysium::Timestep ts) override
@@ -45,35 +49,13 @@ public:
 		Elysium::RenderCommand::SetClearColor(m_BackgroundColor);
 		SceneLayer::OnUpdate(ts);
 
-		if (!m_Running)
-			return;
-
-		auto& cc = m_Camera.GetComponent<Elysium::CameraComponent>();
-
-		if (Elysium::Input::IsKeyPressed(Elysium::Key::W))
-			cc.Camera.MoveForward(ts);
-		if (Elysium::Input::IsKeyPressed(Elysium::Key::S))
-			cc.Camera.MoveBackward(ts);
-		if (Elysium::Input::IsKeyPressed(Elysium::Key::A))
-			cc.Camera.MoveLeft(ts);
-		if (Elysium::Input::IsKeyPressed(Elysium::Key::D))
-			cc.Camera.MoveRight(ts);
-		if (Elysium::Input::IsKeyPressed(Elysium::Key::Space))
-			cc.Camera.MoveUp(ts);
-		if (Elysium::Input::IsKeyPressed(Elysium::Key::LeftShift))
-			cc.Camera.MoveDown(ts);
-
-		auto cursor = Elysium::Input::GetCursorPosition();
-		m_DeltaX = cursor.x - m_LastX;
-		m_DeltaY = m_LastY - cursor.y;
-
-		m_LastX = cursor.x;
-		m_LastY = cursor.y;
-
-		cc.Camera.MoveCursor(m_DeltaX, m_DeltaY);
-
 		if (Elysium::Input::IsKeyPressed(Elysium::Key::Escape))
 			m_Running = false;
+
+		auto nsc = m_Camera.GetComponent<Elysium::NativeScriptComponent>().Instance;
+		auto wasdnsc = static_cast<WASDController*>(nsc);
+
+		wasdnsc->SetEnabled(m_Running);
 	}
 
 	virtual void OnImGuiRender() override
@@ -128,6 +110,10 @@ public:
 			auto movementSpeed = cc.Camera.GetMovementSpeed();
 			ImGui::DragFloat("Novement speed", &movementSpeed);
 			cc.Camera.SetMovementSpeed(movementSpeed);
+
+			auto fov = cc.Camera.GetFOV();
+			ImGui::DragFloat("FOV", &fov);
+			cc.Camera.SetFOV(fov);
 		}
 
 		if (ImGui::Button("Run"))
