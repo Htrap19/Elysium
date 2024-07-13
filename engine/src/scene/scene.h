@@ -8,16 +8,19 @@
 #include "renderer/vertexarray.h"
 #include "renderer/texture.h"
 
+class SceneHierarchicalPanel;
+
 namespace Elysium
 {
 	class Entity;
+
 	class Scene
 	{
 	public:
 		Scene();
 		virtual ~Scene();
 
-		Entity CreateEntity();
+		Entity CreateEntity(const std::string& name = "");
 
 		inline void SetSkyBox(const Shared<CubeMap>& skybox)
 		{ m_SkyBox = skybox; }
@@ -36,5 +39,6 @@ namespace Elysium
 		float m_AspectRatio = 0.0f;
 
 		friend class Entity;
+		friend class SceneHierarchicalPanel;
 	};
 }

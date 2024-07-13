@@ -12,8 +12,19 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
+#include <string.h>
+
 namespace Elysium
 {
+	struct TagComponent
+	{
+		std::string Tag;
+
+		TagComponent(const std::string& tag)
+			: Tag(tag)
+		{}
+	};
+
 	struct TransformComponent
 	{
 		glm::vec3 Position	= glm::vec3(0.0f);

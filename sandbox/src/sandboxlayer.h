@@ -15,13 +15,13 @@ public:
 	{
 		ES_INFO("Sandbox layer attached!");
 
-		m_Sun = m_Scene->CreateEntity();
+		m_Sun = m_Scene->CreateEntity("Sun");
 		m_Sun.AddComponent<Elysium::MeshComponent>("resources/models/sun/scene.gltf");
 		auto& tc = m_Sun.GetComponent<Elysium::TransformComponent>();
 		tc.Scale = glm::vec3(1.0f);
 		tc.Position = glm::vec3(5.0f, 0.0f, 0.0f);
 
-		m_Earth = m_Scene->CreateEntity();
+		m_Earth = m_Scene->CreateEntity("Earth");
 		m_Earth.AddComponent<Elysium::MeshComponent>("resources/models/earth/scene.gltf");
 		auto& tce = m_Earth.GetComponent<Elysium::TransformComponent>();
 		tce.Position = glm::vec3(-10.0f, 0.0f, -10.0f);
@@ -37,7 +37,7 @@ public:
 		});
 		m_Scene->SetSkyBox(spaceSkyBox);
 
-		m_Camera = m_Scene->CreateEntity();
+		m_Camera = m_Scene->CreateEntity("Camera");
 		auto& cc = m_Camera.AddComponent<Elysium::CameraComponent>(glm::vec3(0.0f, 0.0f, 3.0f));
 		cc.Camera.SetAspectRatio(m_Scene->GetAspectRatio());
 		m_Camera.AddComponent<Elysium::NativeScriptComponent>()
@@ -63,62 +63,73 @@ public:
 		if (m_Running)
 			return;
 
+		ShowDockspace(&m_ShowDockspace);
+
 		SceneLayer::OnImGuiRender();
+	}
 
-		ImGui::Begin("Window");
+private:
+	void ShowDockspace(bool* pOpen)
+	{
+		static bool optFullScreen = true;
+		static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None; // Config flags for the Dockspace
 
-		ImGui::ColorEdit4("Pick background", &m_BackgroundColor[0]);
+		ImGuiWindowFlags mainWindowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 
-		if (ImGui::CollapsingHeader("Sun"))
+		if (optFullScreen)
 		{
-			auto& tc = m_Sun.GetComponent<Elysium::TransformComponent>();
-			ImGui::DragFloat3("Position", &tc.Position[0], .1f);
-			ImGui::DragFloat3("Rotation", &tc.Rotate[0], .1f);
-			ImGui::DragFloat3("Scale", &tc.Scale[0], .1f);
+			const ImGuiViewport* viewport = ImGui::GetMainViewport();
 
-			if (ImGui::Button("View"))
+			ImGui::SetNextWindowPos(viewport->WorkPos);
+			ImGui::SetNextWindowSize(viewport->WorkSize);
+			ImGui::SetNextWindowViewport(viewport->ID);
+
+			mainWindowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+			mainWindowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		}
+		else
+		{
+			dockspaceFlags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+		}
+
+		if (dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode)
+			mainWindowFlags |= ImGuiWindowFlags_NoBackground;
+
+		ImGui::Begin("DockSpace Demo", pOpen, mainWindowFlags);
+
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+		{
+			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspaceFlags);
+		}
+		else
+		{
+			// Docking is DISABLED - Show a warning message
+			ES_WARN("Docking is DISABLED!");
+		}
+
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("Options"))
 			{
-				auto& cc = m_Camera.GetComponent<Elysium::CameraComponent>();
-				cc.Camera.SetFront(tc.Position);
-				cc.Camera.SetPosition(tc.Position - (tc.Scale * 30.0f));
-				cc.Camera.SetYaw(0.0f);
-				cc.Camera.SetPitch(0.0f);
+				ImGui::MenuItem("Fullscreen", NULL, &optFullScreen);
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Flag: NoSplit", "", (dockspaceFlags & ImGuiDockNodeFlags_NoSplit) != 0)) { dockspaceFlags ^= ImGuiDockNodeFlags_NoSplit; }
+				if (ImGui::MenuItem("Flag: NoResize", "", (dockspaceFlags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspaceFlags ^= ImGuiDockNodeFlags_NoResize; }
+				if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", (dockspaceFlags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0)) { dockspaceFlags ^= ImGuiDockNodeFlags_NoDockingInCentralNode; }
+				if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspaceFlags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspaceFlags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
+				if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, optFullScreen)) { dockspaceFlags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Close", nullptr, false, pOpen != nullptr))
+					if (pOpen != nullptr)
+						*pOpen = false;
+				ImGui::EndMenu();
 			}
-		}
 
-		if (ImGui::CollapsingHeader("Earth"))
-		{
-			auto& earthTransformComponent = m_Earth.GetComponent<Elysium::TransformComponent>();
-			ImGui::DragFloat3("Position", &earthTransformComponent.Position[0], .1f);
-			ImGui::DragFloat3("Rotation", &earthTransformComponent.Rotate[0], .1f);
-			ImGui::DragFloat3("Scale", &earthTransformComponent.Scale[0], .1f);
-
-			if (ImGui::Button("View"))
-			{
-				auto& cc = m_Camera.GetComponent<Elysium::CameraComponent>();
-				cc.Camera.SetFront(earthTransformComponent.Position);
-			}
-		}
-
-		if (ImGui::CollapsingHeader("Camera"))
-		{
-			auto& cc = m_Camera.GetComponent<Elysium::CameraComponent>();
-			auto turningSpeed = cc.Camera.GetTurningSpeed();
-			ImGui::DragFloat("Turning speed", &turningSpeed);
-			cc.Camera.SetTurningSpeed(turningSpeed);
-
-			auto movementSpeed = cc.Camera.GetMovementSpeed();
-			ImGui::DragFloat("Novement speed", &movementSpeed);
-			cc.Camera.SetMovementSpeed(movementSpeed);
-
-			auto fov = cc.Camera.GetFOV();
-			ImGui::DragFloat("FOV", &fov);
-			cc.Camera.SetFOV(fov);
-		}
-
-		if (ImGui::Button("Run"))
-		{
-			m_Running = true;
+			ImGui::EndMenuBar();
 		}
 
 		ImGui::End();
@@ -133,6 +144,7 @@ private:
 	Elysium::Entity m_Camera;
 
 	bool m_Running = false;
+	bool m_ShowDockspace = true;
 	float m_LastX = 0.0f, m_LastY = 0.0f;
 	float m_DeltaX = 0.0f, m_DeltaY = 0.0f;
 };

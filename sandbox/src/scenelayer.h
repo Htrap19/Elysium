@@ -2,6 +2,8 @@
 
 #include "engine.h"
 
+#include "scenehierarchicalpanel.h"
+
 #include <imgui.h>
 
 class SceneLayer : public Elysium::Layer
@@ -10,6 +12,7 @@ public:
 	SceneLayer()
 	{
 		m_Scene = Elysium::MakeShared<Elysium::Scene>();
+		m_Panel.SetContext(m_Scene);
 	}
 
 	virtual void OnEvent(Elysium::Event& e) override
@@ -25,6 +28,8 @@ public:
 
 	virtual void OnImGuiRender() override
 	{
+		m_Panel.OnImGuiRender();
+
 		ImGui::Begin("Renderer Stats");
 		auto stats = Elysium::Renderer::GetStats();
 		ImGui::Text("Draw calls: %d", stats.DrawCalls);
@@ -43,4 +48,5 @@ protected:
 
 protected:
 	Elysium::Shared<Elysium::Scene> m_Scene;
+	SceneHierarchicalPanel m_Panel;
 };

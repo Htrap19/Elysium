@@ -24,9 +24,10 @@ namespace Elysium
 			});
 	}
 
-	Entity Scene::CreateEntity()
+	Entity Scene::CreateEntity(const std::string& name)
 	{
 		auto entity = Entity(m_Registry.create(), this);
+		entity.AddComponent<TagComponent>(name);
 		entity.AddComponent<TransformComponent>();
 
 		return entity;
