@@ -1,5 +1,8 @@
 #include "scene.h"
 
+#include "core/application.h"
+#include "core/window.h"
+
 #include "scene/entity.h"
 #include "scene/components.h"
 
@@ -12,7 +15,8 @@ namespace Elysium
 {
 	Scene::Scene()
 	{
-		m_AspectRatio = ((float)1280 / (float)720);
+		auto& window = Application::GetInstance().GetWindow();
+		m_AspectRatio = ((float)window.GetWidth() / (float)window.GetHeight());
 	}
 
 	Scene::~Scene()
@@ -24,9 +28,10 @@ namespace Elysium
 			});
 	}
 
-	Entity Scene::CreateEntity()
+	Entity Scene::CreateEntity(const std::string& name)
 	{
 		auto entity = Entity(m_Registry.create(), this);
+		entity.AddComponent<TagComponent>(name);
 		entity.AddComponent<TransformComponent>();
 
 		return entity;

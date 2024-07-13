@@ -70,6 +70,11 @@ project "ImGui"
     targetdir ("%{wks.location}/bin/" .. outputdir .. "%{prj.name}")
 	objdir ("%{wks.location}/obj/" .. outputdir .. "%{prj.name}")
 
+    includedirs
+    {
+        "imgui"
+    }
+
     files
     {
         "imgui/imconfig.h",
@@ -82,7 +87,9 @@ project "ImGui"
         "imgui/imstb_textedit.h",
         "imgui/imstb_truetype.h",
         "imgui/imgui_tables.cpp",
-        "imgui/imgui_demo.cpp"
+        "imgui/imgui_demo.cpp",
+        "imgui/misc/cpp/imgui_stdlib.h",
+        "imgui/misc/cpp/imgui_stdlib.cpp",
     }
 
     filter "system:windows"
@@ -90,8 +97,15 @@ project "ImGui"
         cppdialect "C++20"
         staticruntime "On"
 
-    filter { "system:windows", "configurations:Release" }
+    filter { "system:windows", "configurations:Debug" }
+		runtime "Debug"
+		symbols "on"
+
+	filter { "system:windows", "configurations:Release" }
+		runtime "Release"
+		optimize "on"
         buildoptions "/MT"
+        
 
 
 project "Assimp"
