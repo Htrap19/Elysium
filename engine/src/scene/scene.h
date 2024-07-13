@@ -7,6 +7,7 @@
 #include "renderer/shader.h"
 #include "renderer/vertexarray.h"
 #include "renderer/texture.h"
+#include "renderer/framebuffer.h"
 
 class SceneHierarchicalPanel;
 

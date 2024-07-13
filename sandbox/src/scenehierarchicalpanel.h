@@ -51,6 +51,7 @@ protected:
 			if (entity.HasComponent<Elysium::CameraComponent>())
 			{
 				ImGui::SeparatorText("Camera");
+
 				auto& cc = entity.GetComponent<Elysium::CameraComponent>();
 
 				auto position = cc.Camera.GetPosition();

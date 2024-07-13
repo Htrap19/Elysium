@@ -113,7 +113,7 @@ private:
 		{
 			if (ImGui::BeginMenu("Options"))
 			{
-				ImGui::MenuItem("Fullscreen", NULL, &optFullScreen);
+				ImGui::MenuItem("Fullscreen", nullptr, &optFullScreen);
 				ImGui::Separator();
 
 				if (ImGui::MenuItem("Flag: NoSplit", "", (dockspaceFlags & ImGuiDockNodeFlags_NoSplit) != 0)) { dockspaceFlags ^= ImGuiDockNodeFlags_NoSplit; }
