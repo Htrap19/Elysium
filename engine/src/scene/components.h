@@ -48,7 +48,10 @@ namespace Elysium
 		std::vector<uint32_t> Indices;
 		std::vector<Shared<Texture2D>> Textures;
 
+		std::string Path;
+
 		MeshComponent(const std::string& file)
+			: Path(file)
 		{
 			AssimpLoader loader;
 			loader.Load(file);
