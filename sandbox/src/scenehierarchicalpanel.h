@@ -79,6 +79,13 @@ protected:
 				ImGui::DragFloat("Novement speed", &movementSpeed);
 				cc.Camera.SetMovementSpeed(movementSpeed);
 			}
+
+			if (entity.HasComponent<Elysium::MeshComponent>())
+			{
+				auto& mc = entity.GetComponent<Elysium::MeshComponent>();
+				ImGui::SeparatorText("Mesh");
+				ImGui::InputText("Path", &mc.Path, ImGuiInputTextFlags_ReadOnly);
+			}
 		}
 
 		ImGui::PopID();
