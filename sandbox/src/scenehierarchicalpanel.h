@@ -36,13 +36,14 @@ protected:
 	void DrawEntity(Elysium::Entity& entity)
 	{
 		auto& tag = entity.GetComponent<Elysium::TagComponent>().Tag;
+
+		ImGui::PushID(tag.c_str());
 		if (ImGui::CollapsingHeader(tag.c_str(), true))
 		{
 			ImGui::InputText("Tag", &tag);
 
 			auto& tc = entity.GetComponent<Elysium::TransformComponent>();
 
-			ImGui::PushID(tag.c_str());
 			ImGui::SeparatorText("Transform");
 			ImGui::DragFloat3("Position", &tc.Position.x, 0.1f);
 			ImGui::DragFloat3("Rotation", &tc.Rotate.x, 0.1f);
@@ -78,9 +79,9 @@ protected:
 				ImGui::DragFloat("Novement speed", &movementSpeed);
 				cc.Camera.SetMovementSpeed(movementSpeed);
 			}
-
-			ImGui::PopID();
 		}
+
+		ImGui::PopID();
 	}
 
 private:
