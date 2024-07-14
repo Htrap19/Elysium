@@ -77,7 +77,9 @@ public:
 
 		auto textureId = m_FrameBuffer->GetColorAttachmentId();
 		ImGui::Image((void*)(intptr_t)textureId,
-					 ImVec2(m_FrameBuffer->GetWidth(), m_FrameBuffer->GetHeight()));
+					 ImVec2(m_FrameBuffer->GetWidth(), m_FrameBuffer->GetHeight()),
+					 ImVec2{ 0, 1 }, 
+					 ImVec2{ 1, 0 });
 
 		ImGui::End();
 		ImGui::PopStyleVar();

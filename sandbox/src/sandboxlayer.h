@@ -81,6 +81,46 @@ public:
 		emnsc->SetPlaying(m_Running);
 	}
 
+	virtual void OnImGuiRender() override
+	{
+		EditorLayer::OnImGuiRender();
+
+		ImGui::Begin("Motion settings");
+		auto emnsc = m_Mercury
+			.GetComponent<Elysium::NativeScriptComponent>()
+			.As<EllipticalMotion>();
+
+		auto centerPoint = emnsc->GetCenter();
+		ImGui::DragFloat3("Center", &centerPoint.x);
+		emnsc->SetCenter(centerPoint);
+
+		auto movementSpeed = emnsc->GetMovementSpeed();
+		ImGui::DragFloat("Movement speed", &movementSpeed);
+		emnsc->SetMovementSpeed(movementSpeed);
+
+		auto theta = emnsc->GetTheta();
+		ImGui::DragFloat("Theta", &theta);
+		emnsc->SetTheta(theta);
+
+		auto phi = emnsc->GetPhi();
+		ImGui::DragFloat("Phi", &phi);
+		emnsc->SetPhi(phi);
+
+		auto a = emnsc->GetA();
+		ImGui::DragFloat("A", &a);
+		emnsc->SetA(a);
+
+		auto b = emnsc->GetB();
+		ImGui::DragFloat("B", &b);
+		emnsc->SetB(b);
+
+		auto c = emnsc->GetC();
+		ImGui::DragFloat("C", &c);
+		emnsc->SetC(c);
+
+		ImGui::End();
+	}
+
 private:
 	glm::vec4 m_BackgroundColor = { 0.3f, 0.3f, 0.5f, 1.0f };
 

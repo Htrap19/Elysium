@@ -58,12 +58,12 @@ public:
 protected:
 	glm::vec3 CalculatePosition() const
 	{
-		/*float x = m_A * sin(m_Phi) * cos(m_Theta);
-		float y = m_B * sin(m_Phi) * sin(m_Theta);
-		float z = m_C * cos(m_Phi);*/
-		float x = m_A * cos(m_Theta);
+		float x = m_A * sin(glm::radians(m_Theta)) * cos(glm::radians(m_Phi));
+		float y = m_B * sin(glm::radians(m_Theta)) * sin(glm::radians(m_Phi));
+		float z = m_C * cos(glm::radians(m_Theta));
+		/*float x = m_A * cos(m_Theta);
 		float y = m_B * sin(m_Theta) * cos(m_Phi);
-		float z = m_C * sin(m_Theta) * sin(m_Phi);
+		float z = m_C * sin(m_Theta) * sin(m_Phi);*/
 
 		return m_Center + glm::vec3{ x, y, z };
 	}
@@ -90,12 +90,12 @@ protected:
 	{}
 
 private:
-	float m_A = 251.18f; // half the longest diameter
+	float m_A = 50.0f;  // half the longest diameter
 	float m_B = 50.0f;	// half the shortest diameter
-	float m_C = 151.0f;	// half the diameter for Z axis
+	float m_C = 50.0f;	// half the diameter for Z axis
 
 	float m_Theta = 0.0f;	// varies from 0 to 359 (0 to 2 pi)
-	float m_Phi = 10.0f;	// the angle from the z-axis
+	float m_Phi = 0.0f;	// the angle from the z-axis
 
 	float m_MovementSpeed = 0.5f;
 
