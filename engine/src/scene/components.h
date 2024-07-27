@@ -104,7 +104,7 @@ namespace Elysium
 		template <typename T>
 		T* As()
 		{
-			return static_cast<T*>(Instance);
+			return dynamic_cast<T*>(Instance);
 		}
 	};
 }

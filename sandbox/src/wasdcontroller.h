@@ -2,7 +2,7 @@
 
 #include "engine.h"
 
-class WASDController : public Elysium::ScriptableEntity
+class WASDController : public virtual Elysium::ScriptableEntity
 {
 public:
 	WASDController() = default;
