@@ -21,7 +21,7 @@ public:
 	{
 		ImGui::Begin("Scene Hierarchy");
 
-		m_Context->m_Registry
+        m_Context->GetRegistry()
 			.view<Elysium::TagComponent>()
 			.each([this](auto entity, Elysium::TagComponent& tc)
 			{
@@ -55,29 +55,29 @@ protected:
 
 				auto& cc = entity.GetComponent<Elysium::CameraComponent>();
 
-				auto position = cc.Camera.GetPosition();
+                auto position = cc.CameraIns.GetPosition();
 				ImGui::DragFloat3("Position", &position.x, .1f);
-				cc.Camera.SetPosition(position);
+                cc.CameraIns.SetPosition(position);
 
-				auto nearPlane = cc.Camera.GetNearPlane();
+                auto nearPlane = cc.CameraIns.GetNearPlane();
 				ImGui::DragFloat("Near plane", &nearPlane);
-				cc.Camera.SetNearPlane(nearPlane);
+                cc.CameraIns.SetNearPlane(nearPlane);
 
-				auto farPlane = cc.Camera.GetFarPlane();
+                auto farPlane = cc.CameraIns.GetFarPlane();
 				ImGui::DragFloat("Far plane", &farPlane);
-				cc.Camera.SetFarPlane(farPlane);
+                cc.CameraIns.SetFarPlane(farPlane);
 
-				auto fov = cc.Camera.GetFOV();
+                auto fov = cc.CameraIns.GetFOV();
 				ImGui::DragFloat("FOV", &fov);
-				cc.Camera.SetFOV(fov);
+                cc.CameraIns.SetFOV(fov);
 
-				auto turningSpeed = cc.Camera.GetTurningSpeed();
+                auto turningSpeed = cc.CameraIns.GetTurningSpeed();
 				ImGui::DragFloat("Turning speed", &turningSpeed);
-				cc.Camera.SetTurningSpeed(turningSpeed);
+                cc.CameraIns.SetTurningSpeed(turningSpeed);
 
-				auto movementSpeed = cc.Camera.GetMovementSpeed();
+                auto movementSpeed = cc.CameraIns.GetMovementSpeed();
 				ImGui::DragFloat("Novement speed", &movementSpeed);
-				cc.Camera.SetMovementSpeed(movementSpeed);
+                cc.CameraIns.SetMovementSpeed(movementSpeed);
 			}
 
 			if (entity.HasComponent<Elysium::MeshComponent>())

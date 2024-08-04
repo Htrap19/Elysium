@@ -39,7 +39,7 @@ public:
 
 		m_Camera = m_Scene->CreateEntity("Camera");
 		auto& cc = m_Camera.AddComponent<Elysium::CameraComponent>(glm::vec3(0.0f, 0.0f, 3.0f));
-		cc.Camera.SetAspectRatio(m_Scene->GetAspectRatio());
+        cc.CameraIns.SetAspectRatio(m_Scene->GetAspectRatio());
 		m_Camera.AddComponent<Elysium::NativeScriptComponent>()
 			.Bind<WASDController>();
 	}

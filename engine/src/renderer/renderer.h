@@ -15,6 +15,9 @@ namespace Elysium
 	public:
 		struct Statistics
 		{
+            Statistics()
+            {}
+
 			uint32_t DrawCalls		= 0;
 			uint32_t TotalVertices	= 0;
 			uint32_t TotalIndices	= 0;

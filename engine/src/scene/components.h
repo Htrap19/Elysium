@@ -77,12 +77,12 @@ namespace Elysium
 
 	struct CameraComponent
 	{
-		Camera Camera;
+        Camera CameraIns;
 		bool IsPrimary;
 
 		CameraComponent(const glm::vec3& position,
 						bool isPrimary = true)
-			: Camera(position, 0.0f, 0.0f, 25.0f, 0.5f),
+            : CameraIns(position, 0.0f, 0.0f, 25.0f, 0.5f),
 			IsPrimary(isPrimary)
 		{}
 	};

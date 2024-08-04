@@ -8,26 +8,26 @@ project "GLFW"
 
 	files
 	{
-		"glfw/include/GLFW/glfw3.h",
-		"glfw/include/GLFW/glfw3native.h",
-		"glfw/src/internal.h",
-		"glfw/src/platform.h",
-		"glfw/src/mappings.h",
-        "glfw/src/context.c",
-		"glfw/src/init.c", 
-		"glfw/src/input.c", 
-		"glfw/src/monitor.c", 
-		"glfw/src/platform.c",
-		"glfw/src/vulkan.c",
-		"glfw/src/window.c",
-		"glfw/src/egl_context.c",
-		"glfw/src/osmesa_context.c",
-		"glfw/src/null_platform.h", 
-		"glfw/src/null_joystick.h",
-		"glfw/src/null_init.c", 
-		"glfw/src/null_monitor.c", 
-		"glfw/src/null_window.c",
-		"glfw/src/null_joystick.c"
+            "glfw/include/GLFW/glfw3.h",
+            "glfw/include/GLFW/glfw3native.h",
+            "glfw/src/internal.h",
+            "glfw/src/platform.h",
+            "glfw/src/mappings.h",
+            "glfw/src/context.c",
+            "glfw/src/init.c",
+            "glfw/src/input.c",
+            "glfw/src/monitor.c",
+            "glfw/src/platform.c",
+            "glfw/src/vulkan.c",
+            "glfw/src/window.c",
+            "glfw/src/egl_context.c",
+            "glfw/src/osmesa_context.c",
+            "glfw/src/null_platform.h",
+            "glfw/src/null_joystick.h",
+            "glfw/src/null_init.c",
+            "glfw/src/null_monitor.c",
+            "glfw/src/null_window.c",
+            "glfw/src/null_joystick.c"
 	}
 
 	filter "system:windows"
@@ -118,18 +118,18 @@ project "Assimp"
 	objdir ("%{wks.location}/obj/" .. outputdir .. "%{prj.name}")
 
 	includedirs {
-		'_config_headers/',
-		'_config_headers/assimp/',
-		'assimp/',
-		'assimp/contrib/',
-		'assimp/contrib/irrXML/',
-		'assimp/contrib/unzip/',
-		'assimp/contrib/rapidjson/include/',
-		'assimp/contrib/pugixml/src/',
-		'assimp/contrib/zlib/',
-		'assimp/contrib/utf8cpp/source',
-		'assimp/code',
-		'assimp/include',
+            '_config_headers/',
+            '_config_headers/assimp/',
+            'assimp/',
+            'assimp/contrib/',
+            'assimp/contrib/irrXML/',
+            'assimp/contrib/unzip/',
+            'assimp/contrib/rapidjson/include/',
+            'assimp/contrib/pugixml/src/',
+            'assimp/contrib/zlib/',
+            'assimp/contrib/utf8cpp/source',
+            'assimp/code',
+            'assimp/include',
 	}
 
     defines 
@@ -219,7 +219,7 @@ project "Assimp"
 
 	-- From assimp.sln
 	defines {
-		"_CRT_SECURE_NO_WARNINGS",
+        "_CRT_SECURE_NO_WARNINGS",
         "_SCL_SECURE_NO_WARNINGS",
         "MINIZ_USE_UNALIGNED_LOADS_AND_STORES=0",
         "ASSIMP_IMPORTER_GLTF_USE_OPEN3DGC=1",
@@ -228,7 +228,7 @@ project "Assimp"
         "OPENDDLPARSER_BUILD"
 	}
 
-	files
+    files
     {
         "assimp/include/**",
         "assimp/code/**.h",

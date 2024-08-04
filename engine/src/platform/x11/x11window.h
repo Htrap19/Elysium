@@ -1,0 +1,47 @@
+#pragma once
+
+#ifdef ES_PLATFORM_UNIX
+
+#include "core/window.h"
+#include "renderer/graphicscontext.h"
+
+struct GLFWwindow;
+
+namespace Elysium
+{
+class UnixWindow : public Window
+	{
+    public:
+        UnixWindow(const WindowProps& props);
+        virtual ~UnixWindow();
+
+		virtual void OnUpdate() override;
+
+		inline virtual uint32_t GetWidth() const override { return m_Data.Width; }
+		inline virtual uint32_t GetHeight() const override { return m_Data.Height; }
+
+		virtual void SetEventCallback(const EventCallbackFn& callback) override
+		{ m_Data.Callback = callback; }
+
+		inline virtual void* GetNativeWindow() const override { return m_Window; }
+		virtual void SetVSync(bool enabled) override;
+		virtual bool IsVSync() const override;
+
+		virtual void SetCursorMode(bool enable) override;
+
+	private:
+		GLFWwindow* m_Window = nullptr;
+		Unique<GraphicsContext> m_GraphicsContext;
+
+		struct WindowData
+		{
+			uint32_t Width, Height;
+			std::string Title;
+			bool VSync;
+
+			EventCallbackFn Callback;
+		} m_Data;
+	};
+}
+
+#endif

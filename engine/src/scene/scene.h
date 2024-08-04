@@ -33,6 +33,9 @@ namespace Elysium
 		inline float GetAspectRatio() const
 		{ return m_AspectRatio; }
 
+        inline entt::registry& GetRegistry()
+        { return m_Registry; }
+
 	private:
 		entt::registry m_Registry;
 		Shared<CubeMap> m_SkyBox;
@@ -40,6 +43,6 @@ namespace Elysium
 		float m_AspectRatio = 0.0f;
 
 		friend class Entity;
-		friend class SceneHierarchicalPanel;
+        friend class SceneHierarchicalPanel;
 	};
 }

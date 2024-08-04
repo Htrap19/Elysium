@@ -27,21 +27,21 @@ protected:
 			return;
 
 		auto& cc = m_Self.GetComponent<Elysium::CameraComponent>();
-		if (cc.Camera.GetAspectRatio() != m_Self.GetScene()->GetAspectRatio())
-			cc.Camera.SetAspectRatio(m_Self.GetScene()->GetAspectRatio());
+        if (cc.CameraIns.GetAspectRatio() != m_Self.GetScene()->GetAspectRatio())
+            cc.CameraIns.SetAspectRatio(m_Self.GetScene()->GetAspectRatio());
 
 		if (Elysium::Input::IsKeyPressed(Elysium::Key::W))
-			cc.Camera.MoveForward(ts);
+            cc.CameraIns.MoveForward(ts);
 		if (Elysium::Input::IsKeyPressed(Elysium::Key::S))
-			cc.Camera.MoveBackward(ts);
+            cc.CameraIns.MoveBackward(ts);
 		if (Elysium::Input::IsKeyPressed(Elysium::Key::A))
-			cc.Camera.MoveLeft(ts);
+            cc.CameraIns.MoveLeft(ts);
 		if (Elysium::Input::IsKeyPressed(Elysium::Key::D))
-			cc.Camera.MoveRight(ts);
+            cc.CameraIns.MoveRight(ts);
 		if (Elysium::Input::IsKeyPressed(Elysium::Key::Space))
-			cc.Camera.MoveUp(ts);
+            cc.CameraIns.MoveUp(ts);
 		if (Elysium::Input::IsKeyPressed(Elysium::Key::LeftShift))
-			cc.Camera.MoveDown(ts);
+            cc.CameraIns.MoveDown(ts);
 
 		auto cursor = Elysium::Input::GetCursorPosition();
 		m_DeltaX = cursor.x - m_LastX;
@@ -50,7 +50,7 @@ protected:
 		m_LastX = cursor.x;
 		m_LastY = cursor.y;
 
-		cc.Camera.MoveCursor(m_DeltaX, m_DeltaY);
+        cc.CameraIns.MoveCursor(m_DeltaX, m_DeltaY);
 	}
 
 	virtual void OnDestroy() override

@@ -31,10 +31,10 @@ namespace Elysium
 		static constexpr size_t MaxModelMatricesCount	= 32;
 
 		struct RendererData
-		{
-			Shared<VertexArray> VertexArray;
-			Shared<VertexBuffer> VertexBuffer;
-			Shared<IndexBuffer> IndexBuffer;
+        {
+            Shared<VertexArray> BatchVertexArray;
+            Shared<VertexBuffer> BatchVertexBuffer;
+            Shared<IndexBuffer> BatchIndexBuffer;
 
 			Shared<Shader> RendererShader;
 			Shared<Shader> SkyBoxShader;
@@ -101,12 +101,12 @@ namespace Elysium
 	}
 
 	void Renderer::Init()
-	{
-		s_Data.VertexArray = VertexArray::Create();
-		s_Data.VertexBuffer = VertexBuffer::Create(Util::MaxVerticesCount * sizeof(Renderer::Vertex));
-		s_Data.IndexBuffer = IndexBuffer::Create(Util::MaxIndicesCount);
+    {
+        s_Data.BatchVertexArray = VertexArray::Create();
+        s_Data.BatchVertexBuffer = VertexBuffer::Create(Util::MaxVerticesCount * sizeof(Renderer::Vertex));
+        s_Data.BatchIndexBuffer = IndexBuffer::Create(Util::MaxIndicesCount);
 
-		s_Data.VertexBuffer->SetLayout(BufferLayout({
+        s_Data.BatchVertexBuffer->SetLayout(BufferLayout({
 				ShaderDataType::Float3, // (location = 0) vec3 a_Pos;
 				ShaderDataType::Float2, // (location = 1) vec2 a_TexCoord;
 				ShaderDataType::Int,	// (location = 2) int  a_TexIndex;
@@ -114,8 +114,8 @@ namespace Elysium
 				ShaderDataType::Float4,	// (location = 3) vec4 a_Color;
 			}));
 
-		s_Data.VertexArray->AddVertexBuffer(s_Data.VertexBuffer);
-		s_Data.VertexArray->SetIndexBuffer(s_Data.IndexBuffer);
+        s_Data.BatchVertexArray->AddVertexBuffer(s_Data.BatchVertexBuffer);
+        s_Data.BatchVertexArray->SetIndexBuffer(s_Data.BatchIndexBuffer);
 
 		s_Data.RendererShader = Shader::Create(SHADER_FILE);
 		s_Data.SkyBoxShader = Shader::Create(SKYBOX_SHADER_FILE);
@@ -161,8 +161,8 @@ namespace Elysium
 		{
 			s_Data.RendererShader->SetUniformMat4(MODEL_UNIFORM_NAME + ("[" + std::to_string(i) + "]"),
 												  s_Data.ModelMatrices[i]);
-		}
-		RenderCommand::DrawIndexed(s_Data.VertexArray,
+        }
+        RenderCommand::DrawIndexed(s_Data.BatchVertexArray,
 								   (uint32_t)s_Data.IndexCount);
 
 		s_Stats.DrawCalls++;
@@ -214,13 +214,13 @@ namespace Elysium
 		for (auto& idx : indices)
 			idx = (uint32_t)s_Data.IndexOffset + idx;
 
-		s_Data.VertexBuffer->Bind();
-		s_Data.VertexBuffer->SetData(vertices.data(),
+        s_Data.BatchVertexBuffer->Bind();
+        s_Data.BatchVertexBuffer->SetData(vertices.data(),
 									 (vertices.size() * sizeof(Renderer::Vertex)),
 									 (s_Data.IndexOffset * sizeof(Renderer::Vertex)));
 
-		s_Data.IndexBuffer->Bind();
-		s_Data.IndexBuffer->SetData(indices.data(),
+        s_Data.BatchIndexBuffer->Bind();
+        s_Data.BatchIndexBuffer->SetData(indices.data(),
 									(uint32_t)indices.size(),
 									(uint32_t)s_Data.IndexCount);
 
@@ -325,21 +325,21 @@ namespace Elysium
 		auto& vertices = Util::RendererData::CubeVertices;
 		auto& indices = Util::RendererData::CubeIndices;
 
-		RenderCommand::SetDepthMask(false);
-		
-		s_Data.VertexBuffer->Bind();
-		s_Data.VertexBuffer->SetData(vertices.data(),
+        RenderCommand::SetDepthMask(false);
+
+        s_Data.BatchVertexBuffer->Bind();
+        s_Data.BatchVertexBuffer->SetData(vertices.data(),
 									 (vertices.size() * sizeof(Renderer::Vertex)));
 
-		s_Data.IndexBuffer->Bind();
-		s_Data.IndexBuffer->SetData(indices.data(),
+        s_Data.BatchIndexBuffer->Bind();
+        s_Data.BatchIndexBuffer->SetData(indices.data(),
 									indices.size());
 
 		s_Data.SkyBoxShader->Bind();
 		s_Data.SkyBoxShader->SetUniformMat4(PROJECTION_UNIFORM_NAME, projection);
 		s_Data.SkyBoxShader->SetUniformMat4(VIEW_UNIFORM_NAME, view);
-		skybox->Bind();
-		RenderCommand::DrawIndexed(s_Data.VertexArray,
+        skybox->Bind();
+        RenderCommand::DrawIndexed(s_Data.BatchVertexArray,
 								   indices.size());
 
 		RenderCommand::SetDepthMask(true);
@@ -351,13 +351,13 @@ namespace Elysium
 		size_t numOfVertices = vertices.size();
 		size_t numOfIndices = indices.size();
 
-		s_Data.VertexBuffer->Bind();
-		s_Data.VertexBuffer->SetData(vertices.data(),
+        s_Data.BatchVertexBuffer->Bind();
+        s_Data.BatchVertexBuffer->SetData(vertices.data(),
 									 (numOfVertices * sizeof(Renderer::Vertex)),
 									 (s_Data.IndexOffset * sizeof(Renderer::Vertex)));
 
-		s_Data.IndexBuffer->Bind();
-		s_Data.IndexBuffer->SetData(indices.data(),
+        s_Data.BatchIndexBuffer->Bind();
+        s_Data.BatchIndexBuffer->SetData(indices.data(),
 									(uint32_t)numOfIndices,
 									(uint32_t)s_Data.IndexCount);
 

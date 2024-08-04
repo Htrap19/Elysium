@@ -62,7 +62,7 @@ namespace Elysium
 			auto& cameraComponent = cameraRegistryView.get<CameraComponent>(entity);
 			if (cameraComponent.IsPrimary)
 			{
-				primaryCamera = cameraComponent.Camera;
+                primaryCamera = cameraComponent.CameraIns;
 				break;
 			}
 		}
