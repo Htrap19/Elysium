@@ -100,5 +100,11 @@ namespace Elysium
 			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
 			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
+
+		template <typename T>
+		T* As()
+		{
+			return dynamic_cast<T*>(Instance);
+		}
 	};
 }

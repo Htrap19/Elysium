@@ -3,6 +3,11 @@
 #include "editorlayer.h"
 #include "wasdcontroller.h"
 
+#include "ellipticalmotion.h"
+#include "cameraellipticalmotion.h"
+#include "translation.h"
+#include "camerascript.h"
+
 #include "engine.h"
 
 #include <imgui.h>
@@ -18,13 +23,36 @@ public:
 		m_Sun = m_Scene->CreateEntity("Sun");
 		m_Sun.AddComponent<Elysium::MeshComponent>("resources/models/sun/scene.gltf");
 		auto& tc = m_Sun.GetComponent<Elysium::TransformComponent>();
-		tc.Scale = glm::vec3(1.0f);
-		tc.Position = glm::vec3(5.0f, 0.0f, 0.0f);
+		tc.Scale = glm::vec3(1000.0f);
+
+		float auValue = (tc.Scale.x * 3.0f) * 149.0f;
+
+		m_Mercury = m_Scene->CreateEntity("Mercury");
+		m_Mercury.AddComponent<Elysium::MeshComponent>("resources/models/mercury_sharp/scene.gltf");
+		auto& tcm = m_Mercury.GetComponent<Elysium::TransformComponent>();
+		tcm.Position = glm::vec3(-20.0f, 0.0f, -20.0f);
+		tcm.Scale = glm::vec3(tc.Scale / 285.45f);
+		m_Mercury.AddComponent<Elysium::NativeScriptComponent>()
+			.Bind<EllipticalMotion>();
+
+		m_Venus = m_Scene->CreateEntity("Venus");
+		m_Venus.AddComponent<Elysium::MeshComponent>("resources/models/venus/scene.gltf");
+		auto& tcv = m_Venus.GetComponent<Elysium::TransformComponent>();
+		tcv.Position.x = auValue * 0.72f;
+		tcv.Scale = glm::vec3(tc.Scale / 115.06f);
 
 		m_Earth = m_Scene->CreateEntity("Earth");
 		m_Earth.AddComponent<Elysium::MeshComponent>("resources/models/earth/scene.gltf");
 		auto& tce = m_Earth.GetComponent<Elysium::TransformComponent>();
 		tce.Position = glm::vec3(-10.0f, 0.0f, -10.0f);
+		tce.Scale = glm::vec3(tc.Scale / 109.17f);
+		tce.Position.x = auValue;
+
+		m_Mars = m_Scene->CreateEntity("Mars");
+		m_Mars.AddComponent<Elysium::MeshComponent>("resources/models/mars/scene.gltf");
+		auto& tcma = m_Mars.GetComponent<Elysium::TransformComponent>();
+		tcma.Position.x = auValue * 1.52f;
+		tcma.Scale = glm::vec3(tc.Scale / 205.79f);
 
 		auto spaceSkyBox = Elysium::CubeMap::Create(
 		{
@@ -35,13 +63,19 @@ public:
 			"resources/textures/skybox/front.png",
 			"resources/textures/skybox/back.png",
 		});
-		m_Scene->SetSkyBox(spaceSkyBox);
+        m_Scene->SetSkyBox(spaceSkyBox);
 
 		m_Camera = m_Scene->CreateEntity("Camera");
 		auto& cc = m_Camera.AddComponent<Elysium::CameraComponent>(glm::vec3(0.0f, 0.0f, 3.0f));
         cc.CameraIns.SetAspectRatio(m_Scene->GetAspectRatio());
+        cc.CameraIns.SetFarPlane(10000000.0f);
+        cc.CameraIns.SetPosition(glm::vec3{ auValue, 0.0f, 0.0f });
+		/*m_Camera.AddComponent<Elysium::NativeScriptComponent>()
+			.Bind<WASDController>();*/
 		m_Camera.AddComponent<Elysium::NativeScriptComponent>()
-			.Bind<WASDController>();
+			.Bind<CameraScript>();
+
+        m_AxisLength = cc.CameraIns.GetFarPlane();
 	}
 
 	virtual void OnUpdate(Elysium::Timestep ts) override
@@ -51,19 +85,92 @@ public:
 		EditorLayer::OnUpdate(ts);
 
 		if (Elysium::Input::IsKeyPressed(Elysium::Key::Escape))
+		{
 			m_Running = false;
+			m_ResizeScene = true;
+		}
 
-		auto nsc = m_Camera.GetComponent<Elysium::NativeScriptComponent>().Instance;
-		auto wasdnsc = static_cast<WASDController*>(nsc);
+		auto wasdnsc = m_Camera
+			.GetComponent<Elysium::NativeScriptComponent>()
+			.As<WASDController>();
 
 		wasdnsc->SetEnabled(m_Running);
+
+		auto emnsc = m_Mercury
+			.GetComponent<Elysium::NativeScriptComponent>()
+			.As<EllipticalMotion>();
+		emnsc->SetPlaying(m_Running);
+	}
+
+	virtual void OnImGuiRender() override
+	{
+		EditorLayer::OnImGuiRender();
+
+		if (m_Running)
+			return;
+
+		ImGui::Begin("Motion settings");
+		auto emnsc = m_Mercury
+			.GetComponent<Elysium::NativeScriptComponent>()
+			.As<EllipticalMotion>();
+
+		auto centerPoint = emnsc->GetCenter();
+		ImGui::DragFloat3("Center", &centerPoint.x);
+		emnsc->SetCenter(centerPoint);
+
+		auto movementSpeed = emnsc->GetMovementSpeed();
+		ImGui::DragFloat("Movement speed", &movementSpeed);
+		emnsc->SetMovementSpeed(movementSpeed);
+
+		auto theta = emnsc->GetTheta();
+		ImGui::DragFloat("Theta", &theta);
+		emnsc->SetTheta(theta);
+
+		auto phi = emnsc->GetPhi();
+		ImGui::DragFloat("Phi", &phi);
+		emnsc->SetPhi(phi);
+
+		auto a = emnsc->GetA();
+		ImGui::DragFloat("A", &a);
+		emnsc->SetA(a);
+
+		auto b = emnsc->GetB();
+		ImGui::DragFloat("B", &b);
+		emnsc->SetB(b);
+
+		auto c = emnsc->GetC();
+		ImGui::DragFloat("C", &c);
+		emnsc->SetC(c);
+
+		ImGui::End();
+
+		ImGui::Begin("Camera Translation");
+		ImGui::DragFloat3("Position", &m_TargetPosition[0]);
+		ImGui::DragFloat("Time", &m_TotalTranslationTime);
+		if (ImGui::Button("Go"))
+		{
+			auto ct = m_Camera
+						.GetComponent<Elysium::NativeScriptComponent>()
+						.As<CameraTranslation>();
+			//ct->SetTransitionSpeed(m_TransitionSpeed);
+			//ct->SetTargetPosition(m_TargetPosition);
+			ct->TranslateTo(m_TargetPosition, m_TotalTranslationTime);
+		}
+		ImGui::End();
 	}
 
 private:
-	glm::vec4 m_BackgroundColor = { 0.3f, 0.3f, 0.5f, 1.0f };
+    glm::vec4 m_BackgroundColor = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 	Elysium::Entity m_Sun;
+
+	Elysium::Entity m_Mercury;
+	Elysium::Entity m_Venus;
 	Elysium::Entity m_Earth;
+	Elysium::Entity m_Mars;
 
 	Elysium::Entity m_Camera;
+
+	glm::vec3 m_TargetPosition = glm::vec3(0.0f);
+	float m_TotalTranslationTime = 5.0f;
 };

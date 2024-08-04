@@ -16,6 +16,8 @@ namespace Elysium
 		virtual void SetClearColor(const glm::vec4& color) override;
 		virtual void DrawIndexed(const Shared<VertexArray>& vertexArray,
 								 uint32_t indexCount = 0) override;
+		virtual void DrawLinesIndexed(const Shared<VertexArray>& vertexArray,
+								 uint32_t indexCount = 0) override;
 		virtual void SetDepthMask(bool enable) override;
 	};
 }

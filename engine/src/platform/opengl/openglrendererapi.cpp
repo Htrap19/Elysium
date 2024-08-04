@@ -33,6 +33,15 @@ namespace Elysium
 		glDrawElements(GL_TRIANGLES, (GLsizei)count, GL_UNSIGNED_INT, nullptr);
 	}
 
+	void OpenGLRendererAPI::DrawLinesIndexed(const Shared<VertexArray>& vertexArray,
+											 uint32_t indexCount)
+	{
+		auto count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+		
+		vertexArray->Bind();
+		glDrawElements(GL_LINES, (GLsizei)count, GL_UNSIGNED_INT, nullptr);
+	}
+
 	void OpenGLRendererAPI::SetDepthMask(bool enable)
 	{
 		glDepthMask(enable ? GL_TRUE : GL_FALSE);
