@@ -1,15 +1,11 @@
 #include "raytracerlayer.h"
-#include "core/utility.h"
 #include "imgui.h"
 #include "platform/opengl/opengltexture.h"
-
-#include <random>
 
 RayTracerLayer::RayTracerLayer() {}
 
 void RayTracerLayer::OnAttach()
 {
-    m_RandomEngine.seed(std::random_device()());
 }
 
 void RayTracerLayer::OnUpdate(Elysium::Timestep timeStep)
@@ -39,12 +35,15 @@ void RayTracerLayer::OnImGuiRender()
     m_ViewportWidth = ImGui::GetContentRegionAvail().x;
     m_ViewportHeight = ImGui::GetContentRegionAvail().y;
 
-    if (m_Image)
+    auto image = m_Renderer.GetFinalImage();
+    if (image)
     {
-        auto openGLImage = static_cast<OpenGLTexture2D*>(m_Image.get());
+        auto openGLImage = static_cast<Elysium::OpenGLTexture2D*>(image.get());
         ImGui::Image((void*)(intptr_t)openGLImage->GetID(),
-                     { (float)m_Image->GetWidth(),
-                       (float)m_Image->GetHeight() });
+                     { (float)image->GetWidth(),
+                       (float)image->GetHeight() },
+                     ImVec2(0.0f, 1.0f),
+                     ImVec2(1.0f, 0.0f));
     }
 
     ImGui::End();
@@ -59,22 +58,8 @@ void RayTracerLayer::OnDetach()
 
 void RayTracerLayer::Render()
 {
-    if (!m_Image ||
-        m_ViewportWidth != m_Image->GetWidth() ||
-        m_ViewportHeight != m_Image->GetHeight())
-    {
-        m_Image = Texture2D::Create(m_ViewportWidth, m_ViewportHeight);
-        delete[] m_ImageData;
-        m_ImageData = new uint32_t[m_ViewportWidth * m_ViewportHeight];
-    }
-
-    for (uint32_t i = 0; i < m_ViewportWidth * m_ViewportHeight; i++)
-    {
-        m_ImageData[i] = m_Distribution(m_RandomEngine);
-        m_ImageData[i] |= 0xff000000;
-    }
-
-    m_Image->SetData(m_ImageData, (m_ViewportWidth * m_ViewportHeight) * sizeof(uint32_t));
+    m_Renderer.OnResize(m_ViewportWidth, m_ViewportHeight);
+    m_Renderer.Render();
 }
 
 void RayTracerLayer::ShowDockspace(bool *pOpen)
@@ -103,6 +88,7 @@ void RayTracerLayer::ShowDockspace(bool *pOpen)
     if (dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode)
         mainWindowFlags |= ImGuiWindowFlags_NoBackground;
 
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     ImGui::Begin("DockSpace Demo", pOpen, mainWindowFlags);
 
     ImGuiIO& io = ImGui::GetIO();
@@ -118,4 +104,5 @@ void RayTracerLayer::ShowDockspace(bool *pOpen)
     }
 
     ImGui::End();
+    ImGui::PopStyleVar();
 }
