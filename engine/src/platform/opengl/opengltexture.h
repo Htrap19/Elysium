@@ -20,6 +20,9 @@ namespace Elysium
 		virtual uint32_t GetComponents() const override
 		{ return m_Components; }
 
+        inline uint32_t GetID() const
+        { return m_Id; }
+
 		virtual void SetData(const void* data, size_t size) override;
 
 		virtual const std::string& GetPath() const override

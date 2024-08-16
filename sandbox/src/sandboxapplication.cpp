@@ -7,7 +7,7 @@ class SandboxApplication : public Elysium::Application
 public:
 	SandboxApplication()
 	{
-		Push(new SandboxLayer);
+        Push(new SandboxLayer);
 	}
 };
 

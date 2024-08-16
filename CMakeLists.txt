@@ -23,7 +23,8 @@ elseif(UNIX)
 endif()
 
 add_subdirectory(engine)
-add_subdirectory(sandbox)
+# add_subdirectory(sandbox)
+add_subdirectory(raytracer)
 
-install(TARGETS Sandbox
+install(TARGETS RayTracer
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})

@@ -53,7 +53,7 @@ public:
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,
 							ImVec2(0.0f, 0.0f));
-		ImGui::Begin("Viewport");
+        ImGui::Begin("Viewport");
 
 		auto width = ImGui::GetWindowWidth();
 		auto height = ImGui::GetWindowHeight() - 20;
@@ -88,8 +88,8 @@ public:
 protected:
 	void ShowDockspace(bool* pOpen)
 	{
-		static bool optFullScreen = true;
-		static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None; // Config flags for the Dockspace
+        static bool optFullScreen = true;
+        static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None; // Config flags for the Dockspace
 
 		ImGuiWindowFlags mainWindowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 
@@ -126,38 +126,38 @@ protected:
 			ES_WARN("Docking is DISABLED!");
 		}
 
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("Scene"))
-			{
-				ImGui::MenuItem("Run", nullptr, &m_Running);
+        if (ImGui::BeginMenuBar())
+        {
+            if (ImGui::BeginMenu("Scene"))
+            {
+                ImGui::MenuItem("Run", nullptr, &m_Running);
 
-				if (ImGui::BeginMenu("Options"))
-				{
-					ImGui::MenuItem("Show axis", nullptr, &m_ShowAxis);
+                if (ImGui::BeginMenu("Options"))
+                {
+                    ImGui::MenuItem("Show axis", nullptr, &m_ShowAxis);
 
-					ImGui::EndMenu();
-				}
+                    ImGui::EndMenu();
+                }
 
-				ImGui::EndMenu();
-			}
+                ImGui::EndMenu();
+            }
 
-			if (ImGui::BeginMenu("Options"))
-			{
-				ImGui::MenuItem("Fullscreen", nullptr, &optFullScreen);
-				ImGui::Separator();
+            if (ImGui::BeginMenu("Options"))
+            {
+                ImGui::MenuItem("Fullscreen", nullptr, &optFullScreen);
+                ImGui::Separator();
 
-				if (ImGui::MenuItem("Flag: NoSplit", "", (dockspaceFlags & ImGuiDockNodeFlags_NoSplit) != 0)) { dockspaceFlags ^= ImGuiDockNodeFlags_NoSplit; }
-				if (ImGui::MenuItem("Flag: NoResize", "", (dockspaceFlags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspaceFlags ^= ImGuiDockNodeFlags_NoResize; }
-				if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", (dockspaceFlags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0)) { dockspaceFlags ^= ImGuiDockNodeFlags_NoDockingInCentralNode; }
-				if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspaceFlags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspaceFlags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
-				if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, optFullScreen)) { dockspaceFlags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
+                if (ImGui::MenuItem("Flag: NoSplit", "", (dockspaceFlags & ImGuiDockNodeFlags_NoSplit) != 0)) { dockspaceFlags ^= ImGuiDockNodeFlags_NoSplit; }
+                if (ImGui::MenuItem("Flag: NoResize", "", (dockspaceFlags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspaceFlags ^= ImGuiDockNodeFlags_NoResize; }
+                if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", (dockspaceFlags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0)) { dockspaceFlags ^= ImGuiDockNodeFlags_NoDockingInCentralNode; }
+                if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspaceFlags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspaceFlags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
+                if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, optFullScreen)) { dockspaceFlags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
 
-				ImGui::EndMenu();
-			}
+                ImGui::EndMenu();
+            }
 
-			ImGui::EndMenuBar();
-		}
+            ImGui::EndMenuBar();
+        }
 
 		ImGui::End();
 	}
