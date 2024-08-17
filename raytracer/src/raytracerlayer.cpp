@@ -1,8 +1,14 @@
 #include "raytracerlayer.h"
-#include "imgui.h"
+
 #include "platform/opengl/opengltexture.h"
 
-RayTracerLayer::RayTracerLayer() {}
+#include <imgui.h>
+
+#include "timer.h"
+
+RayTracerLayer::RayTracerLayer()
+    : m_Camera(45.0f, 0.1f, 100.0f)
+{}
 
 void RayTracerLayer::OnAttach()
 {
@@ -10,7 +16,7 @@ void RayTracerLayer::OnAttach()
 
 void RayTracerLayer::OnUpdate(Elysium::Timestep timeStep)
 {
-
+    m_Camera.OnUpdate(timeStep);
 }
 
 void RayTracerLayer::OnEvent(Elysium::Event &e)
@@ -23,6 +29,7 @@ void RayTracerLayer::OnImGuiRender()
     ShowDockspace(&m_ShowDockspace);
 
     ImGui::Begin("Settings");
+    ImGui::Text("Last render: %.3fms", m_LastRenderTime);
     if (ImGui::Button("Render"))
     {
         Render();
@@ -58,8 +65,13 @@ void RayTracerLayer::OnDetach()
 
 void RayTracerLayer::Render()
 {
+    Timer timer;
+
     m_Renderer.OnResize(m_ViewportWidth, m_ViewportHeight);
-    m_Renderer.Render();
+    m_Camera.OnResize(m_ViewportWidth, m_ViewportHeight);
+    m_Renderer.Render(m_Camera);
+
+    m_LastRenderTime = timer.EllapsedMillis();
 }
 
 void RayTracerLayer::ShowDockspace(bool *pOpen)

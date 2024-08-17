@@ -3,6 +3,9 @@
 
 #include "engine.h"
 
+#include "camera.h"
+#include "ray.h"
+
 #include <random>
 
 class Renderer
@@ -11,13 +14,13 @@ public:
     Renderer();
 
     void OnResize(uint32_t width, uint32_t height);
-    void Render();
+    void Render(const Camera& camera);
 
     Elysium::Shared<Elysium::Texture2D> GetFinalImage() const
     { return m_FinalImage; }
 
 private:
-    glm::vec4 PerPixel(glm::vec2 coord);
+    glm::vec4 TraceRay(const Ray& ray);
 
 private:
     Elysium::Shared<Elysium::Texture2D> m_FinalImage;
