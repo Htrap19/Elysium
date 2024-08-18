@@ -103,7 +103,7 @@ file(GLOB_RECURSE ASSIMP_SOURCE_FILES
 set(ASSIMP_SOURCE_FILES
     ${ASSIMP_SOURCE_FILES}
     ${ASSIMP_CONTRIB_SOURCE_FILES})
-add_compile_definitions(ASSIMP_BUILD_NO_OWN_ZLIB)
+# add_compile_definitions(ASSIMP_BUILD_NO_OWN_ZLIB)
 
 add_compile_definitions(ASSIMP_BUILD_NO_X_IMPORTER)
 add_compile_definitions(ASSIMP_BUILD_NO_3DS_IMPORTER)

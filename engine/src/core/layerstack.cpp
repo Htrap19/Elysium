@@ -1,6 +1,8 @@
 #include "layer.h"
 #include "layerstack.h"
 
+#include <algorithm>
+
 namespace Elysium
 {
 	LayerStack::~LayerStack()

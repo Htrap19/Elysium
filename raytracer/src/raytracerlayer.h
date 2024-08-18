@@ -5,6 +5,7 @@
 
 #include "renderer.h"
 #include "camera.h"
+#include "scene.h"
 
 class RayTracerLayer : public Elysium::Layer
 {
@@ -26,6 +27,7 @@ private:
     bool m_ShowDockspace = true;
     Renderer m_Renderer;
     Camera m_Camera;
+    Scene m_Scene;
     float m_LastRenderTime = 0.0f;
     uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 };
