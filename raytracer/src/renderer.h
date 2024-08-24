@@ -21,11 +21,27 @@ public:
     { return m_FinalImage; }
 
 private:
-    glm::vec4 TraceRay(const Scene& scene, const Ray& ray);
+    struct HitPayload
+    {
+        float HitDistance;
+        glm::vec3 WorldPosition;
+        glm::vec3 WorldNormal;
+
+        int ObjectIndex;
+    };
+
+    glm::vec4 PerPixel(uint32_t x, uint32_t y);
+
+    HitPayload TraceRay(const Ray& ray);
+    HitPayload ClosestHit(const Ray& ray, float hitDistance, int objectIndex);
+    HitPayload Miss(const Ray& ray);
 
 private:
     Elysium::Shared<Elysium::Texture2D> m_FinalImage;
     uint32_t* m_ImageData = nullptr;
+
+    const Scene* m_ActiveScene = nullptr;
+    const Camera* m_ActiveCamera = nullptr;
 
     std::mt19937 m_RandomEngine;
     std::uniform_int_distribution<std::mt19937::result_type> m_Distribution;

@@ -88,7 +88,7 @@ void RayTracerLayer::OnImGuiRender()
 
     ImGui::End();
     ImGui::PopStyleVar();
-    Render();
+    // Render();
 }
 
 void RayTracerLayer::OnDetach()
