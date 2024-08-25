@@ -5,24 +5,33 @@
 
 #include <imgui.h>
 
+#include "scene.h"
 #include "timer.h"
 
 RayTracerLayer::RayTracerLayer()
     : m_Camera(45.0f, 0.1f, 100.0f)
 {
+    Material& pinkSphere = m_Scene.Materials.emplace_back();
+    pinkSphere.Albido = {1.0f, 0.0f, 1.0f};
+    pinkSphere.Roughness = 0.0f;
+
+    Material& blueSphere = m_Scene.Materials.emplace_back();
+    blueSphere.Albido = {0.3f, 0.2f, 0.8f};
+    blueSphere.Roughness = 0.1f;
+
     {
         Sphere sphere;
         sphere.Position = {0.0f, 0.0f, 0.0f};
         sphere.Radius = 0.5f;
-        sphere.Albido = {1.0f, 0.0f, 1.0f};
+        sphere.MaterialIndex = 0;
         m_Scene.Spheres.push_back(sphere);
     }
 
     {
         Sphere sphere;
-        sphere.Position = {0.0f, 0.0f, -5.0f};
-        sphere.Radius = 2.8f;
-        sphere.Albido = {0.3f, 0.2f, 0.8f};
+        sphere.Position = {0.0f, -101.0f, 0.0f};
+        sphere.Radius = 100.0f;
+        sphere.MaterialIndex = 1;
         m_Scene.Spheres.push_back(sphere);
     }
 }
@@ -61,7 +70,23 @@ void RayTracerLayer::OnImGuiRender()
         auto& sphere = m_Scene.Spheres[i];
         ImGui::DragFloat3("Position", glm::value_ptr(sphere.Position), 0.1f);
         ImGui::DragFloat("Radius", &sphere.Radius, 0.1f);
-        ImGui::ColorEdit3("Albido", glm::value_ptr(sphere.Albido));
+        ImGui::DragInt("Material", &sphere.MaterialIndex, 1, 0, (int)m_Scene.Materials.size() - 1);
+
+        ImGui::Separator();
+
+        ImGui::PopID();
+    }
+    ImGui::End();
+
+    ImGui::Begin("Materials");
+    for (size_t i = 0; i < m_Scene.Materials.size(); i++)
+    {
+        ImGui::PushID(i);
+
+        auto& material = m_Scene.Materials[i];
+        ImGui::ColorEdit3("Albido", glm::value_ptr(material.Albido));
+        ImGui::DragFloat("Roughness", &material.Roughness, 0.05f, 0.0f, 1.0f);
+        ImGui::DragFloat("Metallic", &material.Metallic, 0.05f, 0.0f, 1.0f);
 
         ImGui::Separator();
 
@@ -88,7 +113,7 @@ void RayTracerLayer::OnImGuiRender()
 
     ImGui::End();
     ImGui::PopStyleVar();
-    // Render();
+    Render();
 }
 
 void RayTracerLayer::OnDetach()

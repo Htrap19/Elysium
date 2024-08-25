@@ -9,7 +9,7 @@
 Camera::Camera(float verticalFOV, float nearClip, float farClip)
     : m_VerticalFOV(verticalFOV), m_NearClip(nearClip), m_FarClip(farClip)
 {
-    m_Position = glm::vec3(0.0f, 0.0, 3.0f);
+    m_Position = glm::vec3(0.0f, 0.0, 6.0f);
     m_ForwardDirection = glm::vec3(0.0f, 0.0f, -1.0f);
 }
 
@@ -28,7 +28,7 @@ void Camera::OnResize(uint32_t width, uint32_t height)
 void Camera::OnUpdate(Elysium::Timestep ts)
 {
     const glm::vec2 mousePos = Elysium::Input::GetCursorPosition();
-    glm::vec2 delta = (mousePos - m_LastMousePosition);
+    glm::vec2 delta = (mousePos - m_LastMousePosition) * 0.002f;
     m_LastMousePosition = mousePos;
 
     if (!Elysium::Input::IsMouseButtonPressed(Elysium::Mouse::ButtonRight))
@@ -99,7 +99,7 @@ void Camera::OnUpdate(Elysium::Timestep ts)
 
 float Camera::GetRotationSpeed() const
 {
-    return 0.003f;
+    return 0.3f;
 }
 
 void Camera::RecalculateProjection()

@@ -36,6 +36,9 @@ private:
     HitPayload ClosestHit(const Ray& ray, float hitDistance, int objectIndex);
     HitPayload Miss(const Ray& ray);
 
+    float RandomFloat();
+    glm::vec3 RandomVec3(float min, float max);
+
 private:
     Elysium::Shared<Elysium::Texture2D> m_FinalImage;
     uint32_t* m_ImageData = nullptr;

@@ -71,34 +71,35 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
     ray.Origin = m_ActiveCamera->GetPosition();
     ray.Direction = m_ActiveCamera->GetRayDirections()[x + y * m_FinalImage->GetWidth()];
 
-    glm::vec3 finalColor;
-    int bounces = 2;
+    glm::vec3 finalColor(0.0f);
+    int bounces = 5;
     float multiplier = 1.0f;
-
-    HitPayload payload = TraceRay(ray);
 
     for (size_t i = 0; i < bounces; i++)
     {
+        HitPayload payload = TraceRay(ray);
         if (payload.HitDistance < 0.0)
         {
-            finalColor += glm::vec3(0.0f, 0.0f, 0.0f) * multiplier;
+            glm::vec3 skyColor = glm::vec3(0.6f, 0.7f, 0.9f);
+            finalColor += skyColor * multiplier;
             break;
         }
 
         const Sphere& sphere = m_ActiveScene->Spheres[payload.ObjectIndex];
+        const Material& material = m_ActiveScene->Materials[sphere.MaterialIndex];
 
         glm::vec3 lightDir = glm::normalize(glm::vec3(-1, -1, -1));
         float d = glm::max(glm::dot(payload.WorldNormal, -lightDir), 0.0f);
 
-        glm::vec3 sphereColor = sphere.Albido;
+        glm::vec3 sphereColor = material.Albido;
         sphereColor *= d;
 
         finalColor += sphereColor * multiplier;
-        multiplier *= 0.7f;
+        multiplier *= 0.5f;
 
         ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
-        ray.Direction = glm::reflect(ray.Direction, payload.WorldNormal);
-        payload = TraceRay(ray);
+        ray.Direction = glm::reflect(ray.Direction,
+                                     payload.WorldNormal + material.Roughness * RandomVec3(-0.5f, 0.5f));
     }
 
     return glm::vec4(finalColor, 1.0f);
@@ -172,4 +173,16 @@ Renderer::HitPayload Renderer::Miss(const Ray &ray)
     HitPayload payload;
     payload.HitDistance = -1.0f;
     return payload;
+}
+
+float Renderer::RandomFloat()
+{
+    return (float)m_Distribution(m_RandomEngine) / (float)std::numeric_limits<uint32_t>::max();
+}
+
+glm::vec3 Renderer::RandomVec3(float min, float max)
+{
+    return glm::vec3(RandomFloat() * (max - min) + min,
+                     RandomFloat() * (max - min) + min,
+                     RandomFloat() * (max - min) + min);
 }
