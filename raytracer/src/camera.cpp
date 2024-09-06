@@ -25,7 +25,7 @@ void Camera::OnResize(uint32_t width, uint32_t height)
     RecalculateRayDirections();
 }
 
-void Camera::OnUpdate(Elysium::Timestep ts)
+bool Camera::OnUpdate(Elysium::Timestep ts)
 {
     const glm::vec2 mousePos = Elysium::Input::GetCursorPosition();
     glm::vec2 delta = (mousePos - m_LastMousePosition) * 0.002f;
@@ -33,7 +33,7 @@ void Camera::OnUpdate(Elysium::Timestep ts)
 
     if (!Elysium::Input::IsMouseButtonPressed(Elysium::Mouse::ButtonRight))
     {
-        return;
+        return false;
     }
 
     bool moved = false;
@@ -95,6 +95,8 @@ void Camera::OnUpdate(Elysium::Timestep ts)
         RecalculateView();
         RecalculateRayDirections();
     }
+
+    return moved;
 }
 
 float Camera::GetRotationSpeed() const

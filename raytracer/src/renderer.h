@@ -12,6 +12,12 @@
 class Renderer
 {
 public:
+    struct Settings
+    {
+        bool Accumulate = true;
+    };
+
+public:
     Renderer();
 
     void OnResize(uint32_t width, uint32_t height);
@@ -19,6 +25,14 @@ public:
 
     Elysium::Shared<Elysium::Texture2D> GetFinalImage() const
     { return m_FinalImage; }
+
+    inline
+    void ResetFrameIndex()
+    { m_FrameIndex = 1; }
+
+    inline
+    Settings& GetSettings()
+    { return m_Settings; }
 
 private:
     struct HitPayload
@@ -42,6 +56,10 @@ private:
 private:
     Elysium::Shared<Elysium::Texture2D> m_FinalImage;
     uint32_t* m_ImageData = nullptr;
+    glm::vec4* m_AccumulationData = nullptr;
+    uint32_t m_FrameIndex = 1;
+
+    Settings m_Settings;
 
     const Scene* m_ActiveScene = nullptr;
     const Camera* m_ActiveCamera = nullptr;

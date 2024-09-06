@@ -42,7 +42,8 @@ void RayTracerLayer::OnAttach()
 
 void RayTracerLayer::OnUpdate(Elysium::Timestep timeStep)
 {
-    m_Camera.OnUpdate(timeStep);
+    if (m_Camera.OnUpdate(timeStep))
+        m_Renderer.ResetFrameIndex();
 }
 
 void RayTracerLayer::OnEvent(Elysium::Event &e)
@@ -59,6 +60,11 @@ void RayTracerLayer::OnImGuiRender()
     if (ImGui::Button("Render"))
     {
         Render();
+    }
+    ImGui::Checkbox("Accumulate", &m_Renderer.GetSettings().Accumulate);
+    if (ImGui::Button("Reset"))
+    {
+        m_Renderer.ResetFrameIndex();
     }
     ImGui::End();
 

@@ -13,7 +13,7 @@ public:
     Camera(float verticalFOV, float nearClip, float farClip);
 
     void OnResize(uint32_t width, uint32_t height);
-    void OnUpdate(Elysium::Timestep ts);
+    bool OnUpdate(Elysium::Timestep ts);
 
     const glm::mat4& GetProjection() const { return m_Projection; }
     const glm::mat4& GetInverseProjection() const { return m_InverseProjection; }
