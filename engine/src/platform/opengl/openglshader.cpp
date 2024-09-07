@@ -194,7 +194,7 @@ namespace Elysium
 
 	int32_t OpenGLShader::GetUniformLocation(const std::string& name)
 	{
-		if (m_UniformCache.contains(name))
+        if (m_UniformCache.contains(name))
 		{
 			return m_UniformCache[name];
 		}
