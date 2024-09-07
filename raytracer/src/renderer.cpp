@@ -71,23 +71,23 @@ void Renderer::Render(const Scene& scene,
     }
 
 #define MT 1
-#ifdef MT
+#if MT
     std::for_each(std::execution::par, m_ImageVerticalIter.begin(), m_ImageVerticalIter.end(),
-                  [this](uint32_t y)
-                  {
-                      std::for_each(std::execution::par, m_ImageHorizontalIter.begin(), m_ImageHorizontalIter.end(),
-                                    [this, y](uint32_t x)
-                                    {
-                                        glm::vec4 color = PerPixel(x, y);
-                                        m_AccumulationData[x + y * m_FinalImage->GetWidth()] += color;
+    [this](uint32_t y)
+    {
+        std::for_each(std::execution::par, m_ImageHorizontalIter.begin(), m_ImageHorizontalIter.end(),
+        [this, y](uint32_t x)
+        {
+            glm::vec4 color = PerPixel(x, y);
+            m_AccumulationData[x + y * m_FinalImage->GetWidth()] += color;
 
-                                        glm::vec4 accumulatedColor = m_AccumulationData[x + y * m_FinalImage->GetWidth()];
-                                        accumulatedColor /= (float)m_FrameIndex;
+            glm::vec4 accumulatedColor = m_AccumulationData[x + y * m_FinalImage->GetWidth()];
+            accumulatedColor /= (float)m_FrameIndex;
 
-                                        accumulatedColor = glm::clamp(accumulatedColor, glm::vec4(0.0f), glm::vec4(1.0f));
-                                        m_ImageData[x + y * m_FinalImage->GetWidth()] = Utils::ConvertToRGBA(accumulatedColor);
-                                    });
-                  });
+            accumulatedColor = glm::clamp(accumulatedColor, glm::vec4(0.0f), glm::vec4(1.0f));
+            m_ImageData[x + y * m_FinalImage->GetWidth()] = Utils::ConvertToRGBA(accumulatedColor);
+        });
+    });
 #else
     for (uint32_t y = 0; y < m_FinalImage->GetHeight(); y++)
     {
@@ -120,7 +120,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
     ray.Direction = m_ActiveCamera->GetRayDirections()[x + y * m_FinalImage->GetWidth()];
 
     glm::vec3 finalColor(0.0f);
-    int bounces = 5;
+    int bounces = 10;
     float multiplier = 1.0f;
 
     for (size_t i = 0; i < bounces; i++)

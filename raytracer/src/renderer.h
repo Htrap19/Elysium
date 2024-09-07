@@ -66,7 +66,7 @@ private:
     const Scene* m_ActiveScene = nullptr;
     const Camera* m_ActiveCamera = nullptr;
 
-    std::mt19937 m_RandomEngine;
+    inline static thread_local std::mt19937 m_RandomEngine;
     std::uniform_int_distribution<std::mt19937::result_type> m_Distribution;
 };
 
