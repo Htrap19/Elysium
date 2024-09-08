@@ -52,6 +52,7 @@ private:
 
     float RandomFloat();
     glm::vec3 RandomVec3(float min, float max);
+    glm::vec3 InUnitSphere();
 
 private:
     Elysium::Shared<Elysium::Texture2D> m_FinalImage;
